@@ -99,3 +99,13 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+###
+
+# Sphinx
+_build
+
+###
+
+# macOS garbage
+.DS_Store
