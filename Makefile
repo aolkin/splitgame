@@ -7,12 +7,12 @@ SRCS := $(shell find $(SRC_DIRS) -name *.cpp)
 OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
 DEPS := $(OBJS:.o=.d)
 
-#INC_DIRS := $(shell find $(SRC_DIRS) -type d)
-INC_DIRS ?= include
+INC_DIRS := $(shell find . -type d -name include)
+#INC_DIRS ?= include
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
 CXX=clang++
-LDFLAGS=-L/usr/local/lib -lsfml-system -lsfml-window -lsfml-graphics -stdlib=libc++
+LDFLAGS=-L/usr/local/lib -lsfml-system -lsfml-window -lsfml-graphics -stdlib=libc++ -framework sfeMovie
 CPPFLAGS ?= $(INC_FLAGS) -MMD -MP -Wall -std=c++11 -I/usr/local/include
 
 $(TARGET_EXEC): $(OBJS)

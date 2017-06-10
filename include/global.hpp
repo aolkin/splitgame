@@ -9,6 +9,7 @@ namespace global {
   const std::string name = "SPLIT";
   const std::string roomdir = "rooms";
   const std::string artdir = "art";
+  const std::string splashfn = "split.mp4";
 }
 
 #endif

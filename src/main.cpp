@@ -9,6 +9,8 @@
 #include "level.hpp"
 #include "player.hpp"
 
+#include "extra/movie.hpp"
+
 #include "entity_factory.hpp"
 
 namespace global {
@@ -37,6 +39,11 @@ int main()
   sf::Clock clock;
 
   int paused = 0;
+
+  bool splash_playing = true;
+  paused++;
+  Movie splash (window);
+  splash.start(global::splashfn);
   
   while (window.isOpen())
     {
@@ -55,16 +62,26 @@ int main()
       sf::Time delta = clock.restart();
       // FSM
 
+      window.clear(sf::Color::Black);
+
+      if (splash_playing) {
+	splash.update();
+	if (splash.done()) {
+	  splash_playing = false;
+	  paused--;
+	} else {
+	  window.draw(splash);
+	}
+      }	
+      
       if (paused == 0) {
 	active.tick();
-	//player.update()
-	
-	window.clear(sf::Color::Black);
+	//player.update()	
 	
 	window.draw(active);
-	
-	window.display();
       }
+      
+      window.display();
     }
   
   return 0;
