@@ -3,22 +3,28 @@
 
 #include "sprite.hpp"
 
-enum class Movement { None, Left, Right, Up, Down };
-
 enum class Mode { Unsplit, Creative, Logical };
 
-class Player : public Sprite {
+class MovementVector {
+private:
+  std::vector<int> v;
+  bool change(int, bool);
+public:
+  MovementVector ();
+  bool changeXV (bool);
+  bool changeYV (bool);
+  int getXV () { return v[0]; };
+  int getYV () { return v[1]; };
+  void resetV ();
+};
+
+class Player : public Sprite, public MovementVector {
 private:
   Mode mode;
-  Movement direction;
-protected:
-  void tick () {};
 public:
-  Player () : Sprite(0,0), mode(Mode::Unsplit), direction(Movement::None)
+  void tick ();
+  Player () : Sprite(0,0), mode(Mode::Unsplit)
 	       { };
-  Movement getDirection () { return direction; };
-  void setDirection (Movement);
-  
 };
 
 #endif

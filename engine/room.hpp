@@ -4,9 +4,8 @@
 #include "sprite.hpp"
 
 class Room : public Sprite {
-protected:
-  void tick ();
 public:
+  void tick ();
   Room () : Sprite(0,0) { };
 };
 

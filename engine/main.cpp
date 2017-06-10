@@ -1,7 +1,11 @@
 
+#include <iostream>
+#include <unordered_map>
+
 #include <SFML/Graphics.hpp>
 
 #include "global.hpp"
+#include "input.hpp"
 #include "level.hpp"
 #include "player.hpp"
 
@@ -19,15 +23,20 @@ int main()
   /*sf::RenderWindow window(sf::VideoMode::getFullscreenModes()[0], name,
     sf::Style::Fullscreen);*/
   window.setVerticalSyncEnabled(true);
+  window.setKeyRepeatEnabled(false);
 
-  // Initialization
+  // Initialization  
 
+  Input::KeyMap keymap = Input::buildKeymap ();
+  
   EntityFactory entity_factory;
   
   Player player;
   Level active (0, player, entity_factory);
 
   sf::Clock clock;
+
+  bool paused = false;
   
   while (window.isOpen())
     {
@@ -36,20 +45,26 @@ int main()
 	{
 	  if (event.type == sf::Event::Closed)
 	    window.close();
-	  // If keyboard events, do movement stuff
+	  if (event.type == sf::Event::LostFocus)
+	    paused = true;
+	  if (event.type == sf::Event::GainedFocus)
+	    paused = false;
+	  active.handleInput(Input::getInput(event, keymap));
 	}
 
       sf::Time delta = clock.restart();
       // FSM
 
-      active.tick();
-      //player.update()
-      
-      window.clear(sf::Color::Black);
-      
-      window.draw(active);
-      
-      window.display();
+      if (!paused) {
+	active.tick();
+	//player.update()
+	
+	window.clear(sf::Color::Black);
+	
+	window.draw(active);
+	
+	window.display();
+      }
     }
   
   return 0;

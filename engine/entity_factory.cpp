@@ -4,10 +4,11 @@
 #include "entities/tree.hpp"
   
 EntityFactory::EntityFactory () {
-  add_entity("Tree", &Tree::makeNew);
+  add_entity("Tree", &Entities::Tree::makeNew);
 }
   
-void EntityFactory::add_entity(const std::string s, const MakerFunc& f) {
+void EntityFactory::add_entity(const std::string s,
+			       const MakerFunc& f) {
   entities[s] = f;
 }
   

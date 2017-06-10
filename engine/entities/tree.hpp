@@ -3,12 +3,15 @@
 
 #include "entity.hpp"
 
-class Tree : public Entity {
-public:
-  Tree () {};
-  static Entity* makeNew(const std::vector<int>) {
-    return new Tree();
-  }
-};
+namespace Entities {
 
+  class Tree : public Entity {
+  public:
+    Tree () {};
+    static Entity* makeNew(const std::vector<int>) {
+      return new Tree();
+    }
+  };
+  
+}
 #endif

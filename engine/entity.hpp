@@ -5,12 +5,31 @@
 
 #include "sprite.hpp"
 
+enum class InputMode { None, Player, Dialogue };
+    
+enum class ActionType { MovePlayer, ShowDialogue, RestrictInput };
+  
+struct EntityAction {
+  ActionType type;
+  union {
+    struct {
+      float offsetX;
+      float offsetY;
+    } movement;
+    struct {
+      int id;
+    } dialogue;
+    InputMode inputMode;
+  };
+};
+
+
 class Entity : public Sprite {
-protected:
-  void tick () {};
 public:
   // TODO: fix this
   Entity () : Sprite(0,0) {};
+  void tick () { doTick(); };
+  virtual std::vector<EntityAction> doTick ();
 };
 
 typedef Entity* (*MakerFunc)(const std::vector<int>);
