@@ -36,7 +36,7 @@ int main()
 
   sf::Clock clock;
 
-  bool paused = false;
+  int paused = 0;
   
   while (window.isOpen())
     {
@@ -46,16 +46,16 @@ int main()
 	  if (event.type == sf::Event::Closed)
 	    window.close();
 	  if (event.type == sf::Event::LostFocus)
-	    paused = true;
+	    paused++;
 	  if (event.type == sf::Event::GainedFocus)
-	    paused = false;
+	    paused--;
 	  active.handleInput(Input::getInput(event, keymap));
 	}
 
       sf::Time delta = clock.restart();
       // FSM
 
-      if (!paused) {
+      if (paused == 0) {
 	active.tick();
 	//player.update()
 	

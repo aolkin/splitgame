@@ -16,7 +16,7 @@ LDFLAGS=-L/usr/local/lib -lsfml-system -lsfml-window -lsfml-graphics -stdlib=lib
 CPPFLAGS ?= $(INC_FLAGS) -MMD -MP -Wall -std=c++11 -I/usr/local/include
 
 $(TARGET_EXEC): $(OBJS)
-	$(CXX) $(OBJS) -o $(TARGET_EXEC) $(LDFLAGS)
+	$(CXX) $(OBJS) -o $(TARGET_EXEC) $(CXXFLAGS) $(LDFLAGS)
 
 run: $(TARGET_EXEC)
 	./$(TARGET_EXEC)

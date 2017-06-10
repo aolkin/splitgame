@@ -30,7 +30,5 @@ void MovementVector::resetV () {
   v[1] = 0;
 }
 
-#include <iostream>
 void Player::tick () {
-  std::cout << getXV() << " " << getYV() << std::endl;;
 }
