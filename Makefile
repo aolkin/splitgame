@@ -1,14 +1,14 @@
 TARGET_EXEC ?= SPLIT
 
 BUILD_DIR ?= build
-SRC_DIRS ?= engine
+SRC_DIRS ?= src
 
 SRCS := $(shell find $(SRC_DIRS) -name *.cpp)
 OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
 DEPS := $(OBJS:.o=.d)
 
 #INC_DIRS := $(shell find $(SRC_DIRS) -type d)
-INC_DIRS ?= engine
+INC_DIRS ?= include
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
 CXX=clang++
