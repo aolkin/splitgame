@@ -7,7 +7,8 @@ SRCS := $(shell find $(SRC_DIRS) -name *.cpp)
 OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
 DEPS := $(OBJS:.o=.d)
 
-INC_DIRS := $(shell find $(SRC_DIRS) -type d)
+#INC_DIRS := $(shell find $(SRC_DIRS) -type d)
+INC_DIRS ?= engine
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
 CXX=clang++
@@ -15,7 +16,10 @@ LDFLAGS=-L/usr/local/lib -lsfml-system -lsfml-window -lsfml-graphics -stdlib=lib
 CPPFLAGS ?= $(INC_FLAGS) -MMD -MP -Wall -std=c++11 -I/usr/local/include
 
 $(TARGET_EXEC): $(OBJS)
-	$(CXX) $(OBJS) -o $@ $(LDFLAGS)
+	$(CXX) $(OBJS) -o $(TARGET_EXEC) $(LDFLAGS)
+
+run: $(TARGET_EXEC)
+	./$(TARGET_EXEC)
 
 # c++ source
 $(BUILD_DIR)/%.cpp.o: %.cpp
@@ -27,6 +31,7 @@ $(BUILD_DIR)/%.cpp.o: %.cpp
 
 clean:
 	$(RM) -r $(BUILD_DIR)
+	$(RM) $(TARGET_EXEC)
 
 -include $(DEPS)
 

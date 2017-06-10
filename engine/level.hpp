@@ -1,0 +1,28 @@
+#ifndef LEVEL_H
+#define LEVEL_H
+
+#include <vector>
+
+#include <SFML/Graphics.hpp>
+
+#include "global.hpp"
+#include "sprite.hpp"
+#include "entity.hpp"
+#include "room.hpp"
+#include "player.hpp"
+#include "entity_factory.hpp"
+
+class Level : public sf::Drawable {
+  int id;
+  Player player;
+  Room room;
+  std::vector<Entity*> entities;
+public:
+  Level (int, Player, EntityFactory);
+  ~Level ();
+  void tick ();
+  int getID () { return id; };
+  void draw (sf::RenderTarget&, sf::RenderStates) const;
+};
+  
+#endif
