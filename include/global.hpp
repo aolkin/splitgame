@@ -4,8 +4,8 @@
 #include <string>
 
 namespace global {
-  const int width = 960;
-  const int height = 540;
+  const float width = 480;
+  const float height = 270;
   const std::string name = "SPLIT";
   const std::string roomdir = "rooms";
   const std::string artdir = "art";

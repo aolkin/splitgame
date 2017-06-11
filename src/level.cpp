@@ -4,14 +4,13 @@
 #include "level.hpp"
 #include "global.hpp"
 #include "entity_factory.hpp"
+#include <algorithm>
 
 Level::Level (int i, Player& p, EntityFactory& factory) :
   id(i), player(p), mode(InputMode::Player) {
 
-  smallScale.setSize(global::width, global::height);
-  largeScale.setSize(global::width / 2, global::height / 2);
-  smallScale.setViewport(sf::FloatRect(0, 0, 1, 1));
-  smallScale.setViewport(sf::FloatRect(0, 0, 1, 1));
+  viewport.setSize(global::width, global::height);
+  viewport.setViewport(sf::FloatRect(0, 0, 1, 1));
 
   entities.push_back(factory.make("Tree",{}));
 };
@@ -36,10 +35,10 @@ void Level::handleInput (const Input::Event& input) {
 	player.changeVelocity(sf::Vector2f(1, 0) * modifier);
 	break;
       case Input::Down:
-	player.changeVelocity(sf::Vector2f(0, -1) * modifier);
+	player.changeVelocity(sf::Vector2f(0, 1) * modifier);
 	break;
       case Input::Up:
-	player.changeVelocity(sf::Vector2f(0, 1) * modifier);
+	player.changeVelocity(sf::Vector2f(0, -1) * modifier);
 	break;
       case Input::Okay:
 	// Attempt to Interact
@@ -74,25 +73,28 @@ void Level::tick () {
   }
   
   player.tick();
-  largeScale.setCenter(player.getPosition());
-  smallScale.setCenter(player.getPosition() * 2.f);
+  auto pos = player.getPosition();
+  pos.x = std::max(pos.x, global::width / 2);
+  pos.x = std::min(pos.x, room.width - global::width / 2);
+  pos.y = std::max(pos.y, global::height / 2);
+  pos.y = std::min(pos.y, room.height - global::height / 2);
+  viewport.setCenter(pos);
 };
 
+#include <iostream>
 void Level::draw (sf::RenderTarget& target,
 		  sf::RenderStates states) const {
-  target.setView(largeScale);
+  target.setView(viewport);
   target.draw(room);
   int lastz = -1;
   for (Entity* s : entities) {
     if (lastz < 0 && s->z > 0) {
-      target.setView(largeScale);
       target.draw(player);
     }
     lastz = s->z;
-    if (s->isSmall())
-      target.setView(smallScale);
-    else
-      target.setView(largeScale);
     target.draw(*s);
+  }
+  if (lastz < 0) {
+    target.draw(player);
   }
 };

@@ -26,8 +26,9 @@ struct EntityAction {
 
 class Entity : public Sprite {
 public:
+  int z;
   // TODO: fix this
-  Entity () : Sprite(0,0) {};
+  Entity (int zz) : Sprite(0,0), z(zz) { };
   void tick () { doTick(); };
   virtual bool isSmall() { return false; };
   virtual std::vector<EntityAction> doTick ();

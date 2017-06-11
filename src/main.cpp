@@ -16,14 +16,17 @@
 namespace global {
 }
 
-int main()
+int main(int argc, char *argv[])
 {
   using namespace global;
-  
-  sf::RenderWindow window(sf::VideoMode(width, height), name,
-		    sf::Style::Titlebar | sf::Style::Close);
-  /*sf::RenderWindow window(sf::VideoMode::getFullscreenModes()[0], name,
-    sf::Style::Fullscreen);*/
+
+  sf::RenderWindow window;
+  if (argc > 1)
+    window.create(sf::VideoMode::getFullscreenModes()[0], name,
+		  sf::Style::Fullscreen);
+  else
+    window.create(sf::VideoMode(width * 2, height * 2), name,
+		  sf::Style::Titlebar | sf::Style::Close);
   window.setVerticalSyncEnabled(true);
   window.setKeyRepeatEnabled(false);
 
@@ -58,6 +61,13 @@ int main()
 	    paused++;
 	  if (event.type == sf::Event::GainedFocus)
 	    paused--;
+	  if (event.type == sf::Event::KeyPressed) {
+	    if (event.key.code == sf::Keyboard::Escape) {
+	      if (splash_playing) {
+		splash.stop();
+	      }
+	    }
+	  }
 	  active.handleInput(Input::getInput(event, keymap));
 	}
 
@@ -65,7 +75,6 @@ int main()
       // FSM
 
       window.setView(defaultView);
-      window.clear(sf::Color::Black);
 
       if (splash_playing) {
 	splash.update();
@@ -78,8 +87,8 @@ int main()
       }
       
       if (paused == 0) {
-	active.tick();	
-	
+	window.clear(sf::Color::Black);
+	active.tick();
 	window.draw(active);
       }
       

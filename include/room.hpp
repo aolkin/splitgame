@@ -4,9 +4,11 @@
 #include "sprite.hpp"
 
 class Room : public Sprite {
+private:
+  sf::Texture texture;
 public:
   void tick ();
-  Room () : Sprite(0,0) { };
+  Room ();
 };
 
 #endif

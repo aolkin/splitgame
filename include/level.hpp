@@ -18,7 +18,7 @@ class Level : public sf::Drawable {
   Room room;
   bool playerIsVisible;
   InputMode mode;
-  sf::View smallScale, largeScale;
+  sf::View viewport;
   std::vector<Entity*> entities;
 public:
   Level (int, Player&, EntityFactory&);

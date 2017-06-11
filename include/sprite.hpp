@@ -5,12 +5,11 @@
 
 class Sprite : public sf::Sprite {
  protected:
-  float width, height;
-  Sprite (float, float);
-  void updateTexture (const sf::Texture&);
-  bool setSheetIndex (int, int);
+  Sprite (float, float, bool=true);
+  bool setSheetIndex (int x, int y);
+  bool setSheetIndex (sf::Vector2i);
  public:
-  int z;
+  const float width, height;
   virtual void tick() =0;
   sf::Vector2f getCenter () const;
 };

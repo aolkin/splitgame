@@ -7,9 +7,9 @@ namespace Entities {
 
   class Tree : public Entity {
   public:
-    Tree () {};
+    Tree (int zz) : Entity(zz) { };
     static Entity* makeNew(const std::vector<int>) {
-      return new Tree();
+      return new Tree(-1);
     }
   };
   

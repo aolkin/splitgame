@@ -3,7 +3,7 @@ TARGET_EXEC ?= SPLIT
 BUILD_DIR ?= build
 SRC_DIRS ?= src
 
-SRCS := $(shell find $(SRC_DIRS) -name *.cpp)
+SRCS := $(shell find -E $(SRC_DIRS) -regex '.*/[a-zA-Z0-9_]+\.cpp')
 OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
 DEPS := $(OBJS:.o=.d)
 
@@ -20,6 +20,9 @@ $(TARGET_EXEC): $(OBJS)
 
 run: $(TARGET_EXEC)
 	./$(TARGET_EXEC)
+
+fs: $(TARGET_EXEC)
+	./$(TARGET_EXEC) --fullscreen
 
 # c++ source
 $(BUILD_DIR)/%.cpp.o: %.cpp
