@@ -29,6 +29,9 @@ $(BUILD_DIR)/%.cpp.o: %.cpp
 
 .PHONY: clean
 
+docs: Doxyfile
+	doxygen
+
 clean:
 	$(RM) -r $(BUILD_DIR)
 	$(RM) $(TARGET_EXEC)
