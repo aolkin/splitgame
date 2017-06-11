@@ -5,7 +5,6 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "global.hpp"
 #include "input.hpp"
 #include "sprite.hpp"
 #include "entity.hpp"
@@ -19,6 +18,7 @@ class Level : public sf::Drawable {
   Room room;
   bool playerIsVisible;
   InputMode mode;
+  sf::View smallScale, largeScale;
   std::vector<Entity*> entities;
 public:
   Level (int, Player&, EntityFactory&);

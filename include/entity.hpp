@@ -29,6 +29,7 @@ public:
   // TODO: fix this
   Entity () : Sprite(0,0) {};
   void tick () { doTick(); };
+  virtual bool isSmall() { return false; };
   virtual std::vector<EntityAction> doTick ();
 };
 

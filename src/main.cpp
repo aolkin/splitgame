@@ -27,6 +27,8 @@ int main()
   window.setVerticalSyncEnabled(true);
   window.setKeyRepeatEnabled(false);
 
+  sf::View defaultView = window.getDefaultView();
+  
   // Initialization  
 
   Input::KeyMap keymap = Input::buildKeymap ();
@@ -38,7 +40,7 @@ int main()
 
   sf::Clock clock;
 
-  int paused = 0;
+  int paused = 1;
 
   bool splash_playing = true;
   paused++;
@@ -62,6 +64,7 @@ int main()
       sf::Time delta = clock.restart();
       // FSM
 
+      window.setView(defaultView);
       window.clear(sf::Color::Black);
 
       if (splash_playing) {
@@ -72,11 +75,10 @@ int main()
 	} else {
 	  window.draw(splash);
 	}
-      }	
+      }
       
       if (paused == 0) {
-	active.tick();
-	//player.update()	
+	active.tick();	
 	
 	window.draw(active);
       }

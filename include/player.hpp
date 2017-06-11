@@ -5,26 +5,16 @@
 
 enum class Mode { Unsplit, Creative, Logical };
 
-class MovementVector {
+class Player : public Sprite {
 private:
-  std::vector<int> v;
-  bool change(int, bool);
-public:
-  MovementVector ();
-  bool changeXV (bool);
-  bool changeYV (bool);
-  int getXV () { return v[0]; };
-  int getYV () { return v[1]; };
-  void resetV ();
-};
-
-class Player : public Sprite, public MovementVector {
-private:
+  sf::Vector2f velocity;
   Mode mode;
 public:
   void tick ();
-  Player () : Sprite(0,0), mode(Mode::Unsplit)
-	       { };
+  sf::Vector2f getVelocity () const { return velocity; };
+  void changeVelocity (sf::Vector2f);
+  sf::Vector2f move (bool);
+  Player ();
 };
 
 #endif

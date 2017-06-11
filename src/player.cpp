@@ -1,34 +1,23 @@
 
 #include "player.hpp"
 
-MovementVector::MovementVector () {
-  v.push_back(0);
-  v.push_back(0);
-}
+Player::Player () : Sprite(0,0), mode(Mode::Unsplit) { };
 
-bool MovementVector::change(int index, bool positive) {
-  if (positive && v[index] < 1) {
-    v[index]++;
-    return true;
-  } else if (!positive && v[index] > -1) {
-    v[index]--;
-    return true;
+void Player::changeVelocity(sf::Vector2f v) {
+  if (v.x != velocity.x || v.y != velocity.y) {
+    velocity += v;
   }
-  return false;
 }
 
-bool MovementVector::changeXV(bool positive) {
-  return change(0, positive);
+sf::Vector2f Player::move (bool doMove) {
+  sf::Vector2f newpos = getPosition() + (velocity * 1.f);
+  if (doMove) {
+    setPosition(newpos);
+  }
+  return newpos;
 }
 
-bool MovementVector::changeYV(bool positive) {
-  return change(1, positive);
-}
-
-void MovementVector::resetV () {
-  v[0] = 0;
-  v[1] = 0;
-}
-
+#include <iostream>
 void Player::tick () {
+  //std::cout << getPosition().x << " " << getPosition().y << std::endl;
 }
