@@ -19,6 +19,7 @@ public:
   void setMode (Mode);
   void changeVelocity (sf::Vector2f);
   sf::Vector2f move (bool);
+  sf::FloatRect getBounds (bool=false);
   Player ();
 };
 

@@ -7,7 +7,7 @@
 
 enum class InputMode { None, Player, Dialogue };
     
-enum class ActionType { MovePlayer, ShowDialogue, RestrictInput };
+enum class ActionType { MovePlayer, ShowDialogue, RestrictInput, CancelMove };
   
 struct EntityAction {
   ActionType type;
@@ -29,9 +29,8 @@ public:
   int z;
   // TODO: fix this
   Entity (int zz) : Sprite(0,0), z(zz) { };
-  void tick () { doTick(); };
   virtual bool isSmall() { return false; };
-  virtual std::vector<EntityAction> doTick ();
+  virtual std::vector<EntityAction> tick (sf::FloatRect);
 };
 
 typedef Entity* (*MakerFunc)(const std::vector<int>);

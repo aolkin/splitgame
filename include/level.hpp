@@ -20,6 +20,8 @@ class Level : public sf::Drawable {
   InputMode mode;
   sf::View viewport;
   std::vector<Entity*> entities;
+  std::vector<sf::FloatRect> bounds;
+  bool checkBoundaries (sf::Vector2f);
 public:
   Level (int, Player&, EntityFactory&);
   ~Level ();

@@ -1,9 +1,7 @@
 
 #include "entity.hpp"
 
-std::vector<EntityAction> Entity::doTick () {
-  std::vector<EntityAction> v;
-  return v;
+std::vector<EntityAction> Entity::tick (sf::FloatRect player) {
+  return std::vector<EntityAction>();
 }
-
 

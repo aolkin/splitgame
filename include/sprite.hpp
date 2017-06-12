@@ -10,7 +10,6 @@ class Sprite : public sf::Sprite {
   bool setSheetIndex (sf::Vector2i);
  public:
   const float width, height;
-  virtual void tick() =0;
   sf::Vector2f getCenter () const;
 };
 

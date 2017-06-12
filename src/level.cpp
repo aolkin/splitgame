@@ -12,6 +12,8 @@ Level::Level (int i, Player& p, EntityFactory& factory) :
   viewport.setSize(global::width, global::height);
   viewport.setViewport(sf::FloatRect(0, 0, 1, 1));
 
+  bounds.push_back(sf::FloatRect(0, 0, room.width, room.height));
+  
   entities.push_back(factory.make("Tree",{}));
 };
 
@@ -48,14 +50,31 @@ void Level::handleInput (const Input::Event& input) {
       }
   }
 }
-  
+
+bool Level::checkBoundaries (sf::Vector2f pos) {
+  bool okay = false;
+  for (sf::FloatRect r : bounds) {
+    okay = okay || r.contains(pos);
+  }
+  return okay;
+};
+
 void Level::tick () {
   room.tick();
+  sf::Vector2f newpos = player.move(false);
+  newpos.y += player.height / 2;
+  bool okayToMove = checkBoundaries(newpos);
+  sf::FloatRect newrect = player.getBounds(okayToMove);
+  
   for (Entity* s : entities) {
-    std::vector<EntityAction> actions = s->doTick();
+    std::vector<EntityAction> actions = s->tick(newrect);
     for (EntityAction a : actions) {
       switch (a.type)
 	{
+	case ActionType::CancelMove:
+	  okayToMove = false;
+	  newrect = player.getBounds(false);
+	  break;
 	case ActionType::RestrictInput :
 	  mode = a.inputMode;
 	  break;
@@ -66,12 +85,8 @@ void Level::tick () {
 	}
     }
   }
-
-  sf::Vector2f newpos = player.move(false);
-  if (true) {
-    player.move(true);
-  }
   
+  player.move(okayToMove);
   player.tick();
   auto pos = player.getPosition();
   pos.x = std::max(pos.x, global::width / 2);

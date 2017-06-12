@@ -1,8 +1,9 @@
 
 #include "player.hpp"
 
-Player::Player () : Sprite(14, 40) {
-  if (!usTexture.loadFromFile("art/playersprite.png")) {
+Player::Player () : Sprite(22, 60) {
+  //setOrigin(11, 60);
+  if (!usTexture.loadFromFile("art/player.png")) {
     throw "Failed to load texture.";
   };
   setMode(Mode::Unsplit);
@@ -44,6 +45,13 @@ sf::Vector2f Player::move (bool doMove) {
   return newpos;
 }
 
+sf::FloatRect Player::getBounds (bool moved) {
+  sf::Vector2f pos = moved ? move(false) : getPosition();
+  return sf::FloatRect(pos.x - width / 2,
+		   pos.y + height / 2 - 10,
+		   width, 10);
+}
+
 void Player::updateTexture (int index) {
   setSheetIndex(index, (int)mode);
 }
@@ -51,5 +59,5 @@ void Player::updateTexture (int index) {
 #include <iostream>
 void Player::tick () {
   updateTexture((int)direction);
-  std::cout << getPosition().x << " " << getPosition().y << std::endl;
+  //std::cout << getPosition().x << " " << getPosition().y << std::endl;
 }
