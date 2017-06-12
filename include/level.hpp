@@ -8,16 +8,19 @@
 #include "input.hpp"
 #include "sprite.hpp"
 #include "entity.hpp"
-#include "room.hpp"
 #include "player.hpp"
 #include "entity_factory.hpp"
 
 class Level : public sf::Drawable {
   int id;
   Player player;
-  Room room;
   bool playerIsVisible;
   InputMode mode;
+  struct {
+    sf::Sprite sprite;
+    sf::Texture texture;
+    float width, height;
+  } room;
   sf::View viewport;
   std::vector<Entity*> entities;
   std::vector<sf::FloatRect> bounds;

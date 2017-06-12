@@ -14,6 +14,8 @@
 #include "entity_factory.hpp"
 
 namespace global {
+  const std::string name = "SPLIT";
+  const std::string splashfn = "split.mp4";
 }
 
 int main(int argc, char *argv[])

@@ -9,6 +9,15 @@
 Level::Level (int i, Player& p, EntityFactory& factory) :
   id(i), player(p), mode(InputMode::Player) {
 
+  playerIsVisible = true;
+  room.width = 480;
+  room.height = 270;
+  
+  if (!room.texture.loadFromFile("art/sample.png")) {
+    throw "Failed to load texture.";
+  };
+  room.sprite.setTexture(room.texture);
+  
   viewport.setSize(global::width, global::height);
   viewport.setViewport(sf::FloatRect(0, 0, 1, 1));
 
@@ -60,7 +69,6 @@ bool Level::checkBoundaries (sf::Vector2f pos) {
 };
 
 void Level::tick () {
-  room.tick();
   sf::Vector2f newpos = player.move(false);
   newpos.y += player.height / 2;
   bool okayToMove = checkBoundaries(newpos);
@@ -100,16 +108,16 @@ void Level::tick () {
 void Level::draw (sf::RenderTarget& target,
 		  sf::RenderStates states) const {
   target.setView(viewport);
-  target.draw(room);
+  target.draw(room.sprite);
   int lastz = -1;
   for (Entity* s : entities) {
-    if (lastz < 0 && s->z > 0) {
+    if (lastz < 0 && s->z > 0 && playerIsVisible) {
       target.draw(player);
     }
     lastz = s->z;
     target.draw(*s);
   }
-  if (lastz < 0) {
+  if (lastz < 0 && playerIsVisible) {
     target.draw(player);
   }
 };
