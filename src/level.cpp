@@ -2,25 +2,28 @@
 #include <SFML/Graphics.hpp>
 
 #include "level.hpp"
-#include "global.hpp"
-#include "entity_factory.hpp"
 #include <algorithm>
 
 Level::Level (int i, Player& p, EntityFactory& factory) :
   id(i), player(p), mode(InputMode::Player) {
 
-  room.width = 480;
-  room.height = 270;
-  
-  if (!room.texture.loadFromFile("art/sample.png")) {
-    throw "Failed to load texture.";
+  sf::Image roomImage;
+  if (!roomImage.loadFromFile("art/sample.png")) {
+    throw "Failed to load room image.";
+  };
+  sf::Vector2u roomDims = roomImage.getSize();
+  room.width = (float)roomDims.x;
+  room.height = (float)roomDims.y;
+  if (!room.texture.loadFromImage(roomImage)) {
+    throw "Failed to load room texture.";
   };
   room.sprite.setTexture(room.texture);
   
   viewport.setSize(global::width, global::height);
   viewport.setViewport(sf::FloatRect(0, 0, 1, 1));
 
-  bounds.push_back(sf::FloatRect(0, 0, room.width, room.height));
+  bounds.push_back(sf::FloatRect(30, 90, room.width - 60, room.height - 100));
+  player.setPosition(room.width/2, room.height/2);
   
   entities.push_back(factory.make("Tree",{}));
 };

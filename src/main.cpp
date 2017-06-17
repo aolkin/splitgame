@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
 	  active.handleInput(Input::getInput(event, keymap));
 	}
 
-      sf::Time delta = clock.restart();
+      //sf::Time delta = clock.restart();
       // FSM
 
       window.setView(defaultView);

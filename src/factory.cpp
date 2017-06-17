@@ -1,5 +1,5 @@
 
-#include "entity_factory.hpp"
+#include "entity.hpp"
 
 #include "entities/tree.hpp"
   
@@ -16,5 +16,3 @@ Entity* EntityFactory::make(const std::string type,
 			    const std::vector<int> params) {
   return entities[type](params);
 }
-
-

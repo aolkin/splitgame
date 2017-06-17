@@ -3,6 +3,7 @@
 
 #include <string>
 
+enum class InputMode { None, Player, Dialogue, Menu };
 enum class Mode { Unsplit = 0, Creative = 2, Logical = 3 };
 
 namespace global {

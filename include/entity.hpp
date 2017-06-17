@@ -3,10 +3,13 @@
 
 #include <vector>
 
-#include "sprite.hpp"
+#include <unordered_map>
+#include <vector>
+#include <string>
 
-enum class InputMode { None, Player, Dialogue };
-    
+#include "sprite.hpp"
+#include "global.hpp"
+
 enum class ActionType { MovePlayer, ShowDialogue, RestrictInput, CancelMove };
   
 struct EntityAction {
@@ -33,6 +36,16 @@ public:
   virtual std::vector<EntityAction> tick (const sf::FloatRect);
 };
 
-typedef Entity* (*MakerFunc)(const std::vector<int>);
+typedef Entity* (*MakerFunc)(const std::vector<float>,
+			     const std::vector<string>);
+
+class EntityFactory {
+private:
+  std::unordered_map<std::string, MakerFunc> entities;
+  void add_entity(const std::string, const MakerFunc&);
+public:
+  EntityFactory ();
+  Entity* make(const std::string, const std::vector<int>);
+};
 
 #endif

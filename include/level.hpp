@@ -5,6 +5,7 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "global.hpp"
 #include "input.hpp"
 #include "sprite.hpp"
 #include "entity.hpp"
