@@ -14,7 +14,6 @@
 class Level : public sf::Drawable {
   int id;
   Player player;
-  bool playerIsVisible;
   InputMode mode;
   struct {
     sf::Sprite sprite;

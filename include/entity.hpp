@@ -30,7 +30,7 @@ public:
   // TODO: fix this
   Entity (int zz) : Sprite(0,0), z(zz) { };
   virtual bool isSmall() { return false; };
-  virtual std::vector<EntityAction> tick (sf::FloatRect);
+  virtual std::vector<EntityAction> tick (const sf::FloatRect);
 };
 
 typedef Entity* (*MakerFunc)(const std::vector<int>);

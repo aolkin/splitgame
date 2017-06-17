@@ -19,3 +19,8 @@ bool Sprite::setSheetIndex (int x, int y) {
   return true;
 };
 
+void Sprite::drawOn (sf::RenderTarget& target, sf::RenderStates states) const {
+  if (isVisible()) {
+    target.draw(*this, states);
+  }
+}

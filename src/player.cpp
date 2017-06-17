@@ -1,7 +1,7 @@
 
 #include "player.hpp"
 
-Player::Player () : Sprite(22, 60) {
+Player::Player () : Sprite(22, 60), visible(true) {
   //setOrigin(11, 60);
   if (!usTexture.loadFromFile("art/player.png")) {
     throw "Failed to load texture.";
@@ -50,6 +50,10 @@ sf::FloatRect Player::getBounds (bool moved) {
   return sf::FloatRect(pos.x - width / 2,
 		   pos.y + height / 2 - 10,
 		   width, 10);
+}
+
+void Player::setVisibility(bool v) {
+  visible = v;
 }
 
 void Player::updateTexture (int index) {

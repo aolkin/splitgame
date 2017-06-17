@@ -9,7 +9,6 @@
 Level::Level (int i, Player& p, EntityFactory& factory) :
   id(i), player(p), mode(InputMode::Player) {
 
-  playerIsVisible = true;
   room.width = 480;
   room.height = 270;
   
@@ -104,20 +103,19 @@ void Level::tick () {
   viewport.setCenter(pos);
 };
 
-#include <iostream>
 void Level::draw (sf::RenderTarget& target,
 		  sf::RenderStates states) const {
   target.setView(viewport);
-  target.draw(room.sprite);
+  target.draw(room.sprite, states);
   int lastz = -1;
   for (Entity* s : entities) {
-    if (lastz < 0 && s->z > 0 && playerIsVisible) {
-      target.draw(player);
+    if (lastz < 0 && s->z > 0) {
+      player.drawOn(target, states);
     }
     lastz = s->z;
-    target.draw(*s);
+    s->drawOn(target, states);
   }
-  if (lastz < 0 && playerIsVisible) {
-    target.draw(player);
+  if (lastz < 0) {
+    player.drawOn(target, states);
   }
 };
