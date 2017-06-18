@@ -13,6 +13,7 @@ void EntityFactory::add_entity(const std::string s,
 }
   
 Entity* EntityFactory::make(const std::string type,
-			    const std::vector<int> params) {
-  return entities[type](params);
+			    const std::vector<float> params,
+			    const std::vector<std::string> sparams) {
+  return entities[type](params, sparams);
 }

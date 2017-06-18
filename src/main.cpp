@@ -11,7 +11,7 @@
 
 #include "extra/movie.hpp"
 
-#include "entity_factory.hpp"
+#include "entity.hpp"
 
 namespace global {
   const std::string name = "SPLIT";

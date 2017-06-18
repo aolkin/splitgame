@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package pb;
+
+import "protobuf/global.proto";
+
+message Level {
+  string texture = 1;
+  repeated FloatRect bounds = 2;
+
+  enum InputMode {
+    None = 0;
+    Player = 1;
+    Dialogue = 2;
+    Menu = 3;
+  }
+  bool playerVisibility = 6;
+  InputMode inputMode = 7;
+  map<int32, Vector2f> starts = 8;
+
+  repeated Entity entities = 11;
+
+  string music = 13;
+}
+    

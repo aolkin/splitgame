@@ -10,7 +10,6 @@
 #include "sprite.hpp"
 #include "entity.hpp"
 #include "player.hpp"
-#include "entity_factory.hpp"
 
 class Level : public sf::Drawable {
   int id;

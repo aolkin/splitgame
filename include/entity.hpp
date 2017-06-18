@@ -37,7 +37,7 @@ public:
 };
 
 typedef Entity* (*MakerFunc)(const std::vector<float>,
-			     const std::vector<string>);
+			     const std::vector<std::string>);
 
 class EntityFactory {
 private:
@@ -45,7 +45,8 @@ private:
   void add_entity(const std::string, const MakerFunc&);
 public:
   EntityFactory ();
-  Entity* make(const std::string, const std::vector<int>);
+  Entity* make(const std::string, const std::vector<float>,
+	       const std::vector<std::string>);
 };
 
 #endif

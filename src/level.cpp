@@ -25,7 +25,7 @@ Level::Level (int i, Player& p, EntityFactory& factory) :
   bounds.push_back(sf::FloatRect(30, 90, room.width - 60, room.height - 100));
   player.setPosition(room.width/2, room.height/2);
   
-  entities.push_back(factory.make("Tree",{}));
+  entities.push_back(factory.make("Tree",{},{}));
 };
 
 Level::~Level () {

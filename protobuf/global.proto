@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package pb;
+
+message Vector2f {
+  float x = 1;
+  float y = 2;
+}
+
+message FloatRect {
+  Vector2f pos = 1;
+  Vector2f size = 2;
+}
+
+message Entity {
+  string name = 1;
+  Vector2f pos = 5;
+  
+  repeated float nargs = 10;
+  repeated string sargs = 11;
+}
