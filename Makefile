@@ -13,10 +13,20 @@ INC_DIRS := include $(GEN_DIR)
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
 CXX=clang++
-LDFLAGS=-L/usr/local/lib -lsfml-system -lsfml-window -lsfml-graphics -lprotobuf -stdlib=libc++ -framework sfeMovie
+LDFLAGS=-L/usr/local/lib -lsfml-system -lsfml-window -lsfml-graphics -lprotobuf -stdlib=libc++
 CPPFLAGS ?= $(INC_FLAGS) -MMD -MP -Wall -std=c++11 -I/usr/local/include
 
 $(TARGET_EXEC): $(OBJS)
+	$(CXX) $(OBJS) -o $(TARGET_EXEC) $(CXXFLAGS) $(LDFLAGS) -framework sfeMovie
+
+cleanmovie:
+	$(RM) $(BUILD_DIR)/src/extra/movie.cpp.o
+	$(RM) $(BUILD_DIR)/src/main.cpp.o
+
+setnomovie: cleanmovie
+	$(eval CPPFLAGS += -DNO_SFEMOVIE)
+
+nomovie: setnomovie $(OBJS)
 	$(CXX) $(OBJS) -o $(TARGET_EXEC) $(CXXFLAGS) $(LDFLAGS)
 
 run: $(TARGET_EXEC)
@@ -35,7 +45,7 @@ $(BUILD_DIR)/%.cc.o: %.cc
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
 
-.PHONY: clean genclean docbrowse
+.PHONY: genclean docbrowse setmovie cleanexe cleanmovie
 
 docs: docbuild docbrowse
 
@@ -67,8 +77,10 @@ editor: $(PB_PY)
 
 ### CLEANERS
 
-clean:
+clean: cleanexe
 	$(RM) -r $(BUILD_DIR)
+
+cleanexe:
 	$(RM) $(TARGET_EXEC)
 
 cleangen: genclean

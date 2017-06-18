@@ -1,6 +1,7 @@
 
 #include "extra/movie.hpp"
 
+#ifndef NO_SFEMOVIE
 bool Movie::start (std::string fn) {
   bool result = openFromFile(fn);
   if (!result) { return false; }
@@ -14,3 +15,4 @@ bool Movie::done () {
   return (getStatus() == sfe::Stopped);
     
 }
+#endif
