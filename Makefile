@@ -20,43 +20,50 @@ $(TARGET_EXEC): $(OBJS)
 	$(CXX) $(OBJS) -o $(TARGET_EXEC) $(CXXFLAGS) $(LDFLAGS)
 
 run: $(TARGET_EXEC)
-	./$(TARGET_EXEC)
+	@./$(TARGET_EXEC)
 
 fs: $(TARGET_EXEC)
-	./$(TARGET_EXEC) --fullscreen
+	@./$(TARGET_EXEC) --fullscreen
 
 # c++ source
 $(BUILD_DIR)/%.cpp.o: %.cpp
-	$(MKDIR_P) $(dir $@)
+	@$(MKDIR_P) $(dir $@)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
 $(BUILD_DIR)/%.cc.o: %.cc
-	$(MKDIR_P) $(dir $@)
+	@$(MKDIR_P) $(dir $@)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
 
-.PHONY: clean cleangen
+.PHONY: clean genclean
 
 docs: Doxyfile
-	doxygen
+	@doxygen
 
-PB_SRCS := $(shell find -E protobuf -regex '.*/[a-zA-Z0-9_]+\.proto')
+PB_SRCS := $(shell find -E pb -regex '.*/[a-zA-Z0-9_]+\.proto')
 PB_H := $(PB_SRCS:%.proto=$(GEN_DIR)/%.pb.h)
+PB_PY := $(PB_SRCS:%.proto=$(GEN_DIR)/%_pb2.py)
 PB_DEPS := $(PB_H:.pb.h=.d)
 
 $(GEN_DIR)/%.pb.h: %.proto
-	$(MKDIR_P) $(dir $@)
-	protoc $< --cpp_out=gen --dependency_out=gen/$<.d
+	@$(MKDIR_P) $(dir $@)
+	protoc $< --cpp_out=gen --python_out=gen --dependency_out=gen/$<.d
+
+$(GEN_DIR)/%_pb2.py: %.pb.h
 
 -include $(PB_DEPS)
 
 protobuf: $(PB_H)
 
+editor: $(PB_PY)
+	@PYTHONPATH=$(GEN_DIR) python3 tools/editor.py
+
 clean:
 	$(RM) -r $(BUILD_DIR)
 	$(RM) $(TARGET_EXEC)
 
-cleangen:
+cleangen: genclean
+genclean:
 	$(RM) -r $(GEN_DIR)
 	$(MKDIR_P) $(GEN_DIR)
 

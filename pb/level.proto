@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package pb;
 
-import "protobuf/global.proto";
+import "pb/global.proto";
 
 message Level {
   string texture = 1;
