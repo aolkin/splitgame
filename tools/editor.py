@@ -1,23 +1,39 @@
 #!/usr/bin/env python3
 
-def menu(choices=("Cancel",), title="Choose an option:"):
-    print()
-    for i, c in enumerate(choices):
-        print("{}. {}".format(i+1, c))
-    print()
-    res = 0
-    while not res:
-        print(title, end=" ")
-        inp = input()
-        try:
-            res = int(inp)
-            if not (0 < res < len(choices) + 1):
-                res = 0
-                raise RuntimeError()
-        except:
-            print("Invalid input! Try again...")
-    return res - 1
+import sys
 
-MAIN = ("Room Options (Size, Texture, Bounds)", "Player Options (Visibility, InputMode)", "Entities")
-res = menu(MAIN)
-print("Congrats, you chose {}.".format(MAIN[res]))
+from toollib import pb, get
+
+level = pb.Level()
+try:
+    fd = open(sys.argv[1], "rb")
+    level.ParseFromString(fd.read())
+    fd.close()
+    parsed = True
+except Exception:
+    parsed = False
+
+level.texture = get.filename("art/room")
+
+print("\nBOUNDARY RECTANGLES:")
+print("\n".join([str(i) for i in level.bounds]))
+del level.bounds[:]
+another = True
+while another:
+    pb.rect(level.bounds.add(),
+            get.number("x:"),
+            get.number("y:"),
+            get.number("width:", True),
+            get.number("height:", True))
+    another = get.another()
+                    
+level.playerVisibility = True
+level.inputMode = pb.Level.Player
+
+print("\nPLAYER START POSITION")
+level.starts[0].x = get.number("x")
+level.starts[0].y = get.number("y")
+
+fd = open(sys.argv[1], "wb")
+fd.write(level.SerializeToString())
+fd.close()

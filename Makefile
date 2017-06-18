@@ -35,10 +35,15 @@ $(BUILD_DIR)/%.cc.o: %.cc
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
 
-.PHONY: clean genclean
+.PHONY: clean genclean docbrowse
 
-docs: Doxyfile
+docs: docbuild docbrowse
+
+docbuild: Doxyfile
 	@doxygen
+
+docbrowse:
+	@open build/docs/index.html
 
 PB_SRCS := $(shell find -E pb -regex '.*/[a-zA-Z0-9_]+\.proto')
 PB_H := $(PB_SRCS:%.proto=$(GEN_DIR)/%.pb.h)
@@ -55,8 +60,12 @@ $(GEN_DIR)/%_pb2.py: %.pb.h
 
 protobuf: $(PB_H)
 
+### PYTHON
+
 editor: $(PB_PY)
-	@PYTHONPATH=$(GEN_DIR) python3 tools/editor.py
+	@PYTHONPATH=$(GEN_DIR) python3 tools/editor.py $(ARG)
+
+### CLEANERS
 
 clean:
 	$(RM) -r $(BUILD_DIR)

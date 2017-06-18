@@ -26,7 +26,7 @@ class Level : public sf::Drawable {
   std::vector<sf::FloatRect> bounds;
   bool checkBoundaries (sf::Vector2f);
 public:
-  Level (Player&);
+  Level (Player&, sf::Image&);
   ~Level ();
   void tick ();
   void handleInput (const Input::Event&);

@@ -6,7 +6,7 @@
 #include "extra/pbhelp.hpp"
 #include <algorithm>
 
-const std::string ROOM_ART = "art/rooms/";
+const std::string ROOM_ART = "art/room/";
 
 Level Level::load(std::istream &stream, Player& p, int start,
 		  const EntityFactory& factory) {
@@ -14,18 +14,12 @@ Level Level::load(std::istream &stream, Player& p, int start,
   if (!pbl.ParseFromIstream(&stream)) {
     throw "Failed to parse level!";
   }
-  Level l(p);
 
   sf::Image roomImage;
   if (!roomImage.loadFromFile(ROOM_ART + pbl.texture())) {
     throw "Failed to load room image.";
   };
-  sf::Vector2u roomDims = roomImage.getSize();
-  l.room.width = (float)roomDims.x;
-  l.room.height = (float)roomDims.y;
-  if (!l.room.texture.loadFromImage(roomImage)) {
-    throw "Failed to load room texture.";
-  };
+  Level l(p, roomImage);
 
   for (int i = 0; i < pbl.bounds_size(); i++) {
     l.bounds.push_back(pbToSFRect(pbl.bounds(i)));
@@ -52,8 +46,16 @@ Level Level::load(std::istream &stream, Player& p, int start,
   return l;
 };
 
-Level::Level (Player& p) : player(p), mode(InputMode::Player) {
+Level::Level (Player& p, sf::Image& roomImage) : player(p),
+						 mode(InputMode::None) {
+  sf::Vector2u roomDims = roomImage.getSize();
+  room.width = (float)roomDims.x;
+  room.height = (float)roomDims.y;
+  if (!room.texture.loadFromImage(roomImage)) {
+    throw "Failed to load room texture.";
+  };
   room.sprite.setTexture(room.texture);
+  
   viewport.setSize(global::width, global::height);
   viewport.setViewport(sf::FloatRect(0, 0, 1, 1));
 };

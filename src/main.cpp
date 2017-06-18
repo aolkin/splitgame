@@ -1,5 +1,6 @@
 
 #include <iostream>
+#include <fstream>
 #include <unordered_map>
 
 #include <SFML/Graphics.hpp>
@@ -41,8 +42,10 @@ int main(int argc, char *argv[])
   EntityFactory entity_factory;
   
   Player player;
-  Level active = Level::load(input("rooms/001.dat", ios::in | ios::binary),
-			     player, 0, entity_factory);
+  std::ifstream file("rooms/001.dat",
+		     std::ios::in | std::ios::binary);
+  Level active = Level::load(file, player, 0, entity_factory);
+  file.close();
 
   sf::Clock clock;
 
