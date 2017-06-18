@@ -46,7 +46,7 @@ private:
 public:
   EntityFactory ();
   Entity* make(const std::string, const std::vector<float>,
-	       const std::vector<std::string>);
+	       const std::vector<std::string>) const;
 };
 
 #endif

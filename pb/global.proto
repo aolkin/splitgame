@@ -14,7 +14,6 @@ message FloatRect {
 
 message Entity {
   string name = 1;
-  Vector2f pos = 5;
   
   repeated float nargs = 10;
   repeated string sargs = 11;

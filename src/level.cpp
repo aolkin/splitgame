@@ -2,30 +2,60 @@
 #include <SFML/Graphics.hpp>
 
 #include "level.hpp"
+#include "pb/level.pb.h"
+#include "extra/pbhelp.hpp"
 #include <algorithm>
 
-Level::Level (int i, Player& p, EntityFactory& factory) :
-  id(i), player(p), mode(InputMode::Player) {
+const std::string ROOM_ART = "art/rooms/";
+
+Level Level::load(std::istream &stream, Player& p, int start,
+		  const EntityFactory& factory) {
+  pb::Level pbl;
+  if (!pbl.ParseFromIstream(&stream)) {
+    throw "Failed to parse level!";
+  }
+  Level l(p);
 
   sf::Image roomImage;
-  if (!roomImage.loadFromFile("art/sample.png")) {
+  if (!roomImage.loadFromFile(ROOM_ART + pbl.texture())) {
     throw "Failed to load room image.";
   };
   sf::Vector2u roomDims = roomImage.getSize();
-  room.width = (float)roomDims.x;
-  room.height = (float)roomDims.y;
-  if (!room.texture.loadFromImage(roomImage)) {
+  l.room.width = (float)roomDims.x;
+  l.room.height = (float)roomDims.y;
+  if (!l.room.texture.loadFromImage(roomImage)) {
     throw "Failed to load room texture.";
   };
-  room.sprite.setTexture(room.texture);
+
+  for (int i = 0; i < pbl.bounds_size(); i++) {
+    l.bounds.push_back(pbToSFRect(pbl.bounds(i)));
+  }
+
+  l.player.setVisibility(pbl.playervisibility());
+  l.mode = (InputMode)pbl.inputmode();
+
+  l.player.setPosition(pbToSFVector(pbl.starts().at(start)));
+
+  for (int i = 0; i < pbl.entities_size(); i++) {
+    pb::Entity e = pbl.entities(i);
+    std::vector<float> fp;
+    std::vector<std::string> sp;
+    for (int j = 0; j < e.nargs_size(); j++) {
+      fp.push_back(e.nargs(j));
+    }
+    for (int j = 0; j < e.sargs_size(); j++) {
+      sp.push_back(e.sargs(i));
+    }
+    l.entities.push_back(factory.make(e.name(), fp, sp));
+  }
   
+  return l;
+};
+
+Level::Level (Player& p) : player(p), mode(InputMode::Player) {
+  room.sprite.setTexture(room.texture);
   viewport.setSize(global::width, global::height);
   viewport.setViewport(sf::FloatRect(0, 0, 1, 1));
-
-  bounds.push_back(sf::FloatRect(30, 90, room.width - 60, room.height - 100));
-  player.setPosition(room.width/2, room.height/2);
-  
-  entities.push_back(factory.make("Tree",{},{}));
 };
 
 Level::~Level () {

@@ -41,7 +41,8 @@ int main(int argc, char *argv[])
   EntityFactory entity_factory;
   
   Player player;
-  Level active (0, player, entity_factory);
+  Level active = Level::load(input("rooms/001.dat", ios::in | ios::binary),
+			     player, 0, entity_factory);
 
   sf::Clock clock;
 

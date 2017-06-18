@@ -2,6 +2,8 @@
 #define LEVEL_H
 
 #include <vector>
+#include <iostream>
+#include <fstream>
 
 #include <SFML/Graphics.hpp>
 
@@ -12,7 +14,6 @@
 #include "player.hpp"
 
 class Level : public sf::Drawable {
-  int id;
   Player player;
   InputMode mode;
   struct {
@@ -25,12 +26,12 @@ class Level : public sf::Drawable {
   std::vector<sf::FloatRect> bounds;
   bool checkBoundaries (sf::Vector2f);
 public:
-  Level (int, Player&, EntityFactory&);
+  Level (Player&);
   ~Level ();
   void tick ();
-  int getID () { return id; };
   void handleInput (const Input::Event&);
   void draw (sf::RenderTarget&, sf::RenderStates) const;
+  static Level load(std::istream&, Player&, int, const EntityFactory&);
 };
   
 #endif
