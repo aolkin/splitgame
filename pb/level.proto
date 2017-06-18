@@ -4,10 +4,13 @@ package pb;
 
 import "pb/global.proto";
 
+// Level definition
 message Level {
-  string texture = 1;
-  repeated FloatRect bounds = 2;
+  string texture = 1; // Name of background texture file
 
+  // List of rectangles the player will be kept inside of the union of
+  repeated FloatRect bounds = 2;
+  
   enum InputMode {
     None = 0;
     Player = 1;
@@ -16,9 +19,11 @@ message Level {
   }
   bool playerVisibility = 6;
   InputMode inputMode = 7;
+
+  // Possible locations for the player upon entry to the room
   map<int32, Vector2f> starts = 8;
 
-  repeated Entity entities = 11;
+  repeated Entity entities = 11; // List of entities within the room
 
   string music = 13;
 }

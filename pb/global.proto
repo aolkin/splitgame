@@ -2,16 +2,21 @@ syntax = "proto3";
 
 package pb;
 
+// Matches a commonly used SFML class
 message Vector2f {
   float x = 1;
   float y = 2;
 }
 
+// Matches another commonly used SFML class
 message FloatRect {
   Vector2f pos = 1;
   Vector2f size = 2;
 }
 
+// Generic entity description
+// Entities have an identifying name, so they can be linked to code
+// They can also have float and string arguments
 message Entity {
   string name = 1;
   
