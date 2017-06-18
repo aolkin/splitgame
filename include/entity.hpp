@@ -10,7 +10,8 @@
 #include "sprite.hpp"
 #include "global.hpp"
 
-enum class ActionType { MovePlayer, ShowDialogue, RestrictInput, CancelMove };
+enum class ActionType { MovePlayer, ShowDialogue, RestrictInput, CancelMove,
+    CancelXMove, CancelYMove };
   
 struct EntityAction {
   ActionType type;

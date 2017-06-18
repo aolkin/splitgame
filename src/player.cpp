@@ -37,18 +37,20 @@ void Player::changeVelocity(sf::Vector2f v) {
     direction = Facing::Down;
 }
 
-sf::Vector2f Player::move (bool doMove) {
-  sf::Vector2f newpos = getPosition() + (velocity * 2.f);
+sf::Vector2f Player::move (bool doMove, BoolVector v) {
+  sf::Vector2f tv(velocity.x * v.x, velocity.y * v.y);
+  sf::Vector2f newpos = getPosition() + (tv * 2.f);
   if (doMove) {
     setPosition(newpos);
   }
+  newpos.y += height / 2;
   return newpos;
 }
 
-sf::FloatRect Player::getBounds (bool moved) {
-  sf::Vector2f pos = moved ? move(false) : getPosition();
+sf::FloatRect Player::getBounds (BoolVector v) {
+  sf::Vector2f pos = move(false, v);
   return sf::FloatRect(pos.x - width / 2,
-		   pos.y + height / 2 - 10,
+		   pos.y - 10,
 		   width, 10);
 }
 

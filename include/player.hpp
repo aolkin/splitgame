@@ -6,6 +6,13 @@
 
 enum class Facing { Down = 0, Up = 1, Left = 2, Right = 3 };
 
+struct BoolVector {
+  bool x, y;
+  BoolVector (bool def=true) : x(def), y(def) { };
+  BoolVector (bool ix, bool iy) : x(ix), y(iy) { };
+  operator bool() const { return x && y; };
+};
+
 class Player : public Sprite {
 private:
   sf::Vector2f velocity;
@@ -21,8 +28,8 @@ public:
   void setVisibility(bool);
   void setMode (Mode);
   void changeVelocity (sf::Vector2f);
-  sf::Vector2f move (bool);
-  sf::FloatRect getBounds (bool=false);
+  sf::Vector2f move (bool, BoolVector=BoolVector());
+  sf::FloatRect getBounds (BoolVector);
   Player ();
 };
 

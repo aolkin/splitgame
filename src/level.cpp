@@ -103,9 +103,9 @@ bool Level::checkBoundaries (sf::Vector2f pos) {
 };
 
 void Level::tick () {
-  sf::Vector2f newpos = player.move(false);
-  newpos.y += player.height / 2;
-  bool okayToMove = checkBoundaries(newpos);
+  BoolVector okayToMove;
+  okayToMove.x = checkBoundaries(player.move(false, BoolVector(true, false)));
+  okayToMove.y = checkBoundaries(player.move(false, BoolVector(false, true)));
   sf::FloatRect newrect = player.getBounds(okayToMove);
   
   for (Entity* s : entities) {
@@ -114,8 +114,17 @@ void Level::tick () {
       switch (a.type)
 	{
 	case ActionType::CancelMove:
-	  okayToMove = false;
-	  newrect = player.getBounds(false);
+	  okayToMove.x = false;
+	  okayToMove.y = false;
+	  newrect = player.getBounds(okayToMove);
+	  break;
+	case ActionType::CancelXMove:
+	  okayToMove.x = false;
+	  newrect = player.getBounds(okayToMove);
+	  break;
+	case ActionType::CancelYMove:
+	  okayToMove.y = false;
+	  newrect = player.getBounds(okayToMove);
 	  break;
 	case ActionType::RestrictInput :
 	  mode = a.inputMode;
@@ -128,7 +137,7 @@ void Level::tick () {
     }
   }
   
-  player.move(okayToMove);
+  player.move(true, okayToMove);
   player.tick();
   auto pos = player.getPosition();
   pos.x = std::max(pos.x, global::width / 2);
