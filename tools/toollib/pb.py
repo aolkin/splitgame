@@ -13,3 +13,9 @@ def rect(r, x, y, z, w):
     r.size.x = z
     r.size.y = w
     return r
+
+def addmore(l, func):
+    l.append(func())
+
+def adder(l, func):
+    return lambda: addmore(l, func)

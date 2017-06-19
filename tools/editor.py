@@ -15,28 +15,33 @@ try:
 except Exception:
     parsed = False
 
-level.texture = get.filename("art/room", "Select the background image:",
+level.texture = get.filename("art/room", "Select the background image",
                              default=level.texture)
 
-print("\nBOUNDARY RECTANGLES:")
-print("\n".join([str(i) for i in level.bounds]))
-del level.bounds[:]
-get.another(lambda:
-            pb.rect(level.bounds.add(),
-                    get.number("x:"),
-                    get.number("y:"),
-                    get.number("width:", True),
-                    get.number("height:", True)))
+if get.yesno("Edit boundaries"):
+    print("\n".join([str(i) for i in level.bounds]))
+    del level.bounds[:]
+    get.another(lambda:
+                pb.rect(level.bounds.add(),
+                        get.number("x"),
+                        get.number("y"),
+                        get.number("width", True),
+                        get.number("height", True)))
 
 level.playerVisibility = True
 level.inputMode = pb.Level.Player
 
-print("\nPLAYER START POSITION")
-level.starts[0].x = get.number("x")
-level.starts[0].y = get.number("y")
+if get.yesno("Edit player start position"):
+    level.starts[0].x = get.number("x")
+    level.starts[0].y = get.number("y")
 
-print("\nENTITIES")
-
+e = level.entities.add()
+e.name = get.string("Entity type", "generic")
+get.another(pb.adder(e.nargs, get.number),
+            prompt="Enter float arguments")
+e.sargs.append(get.filename("art/entity", "Select the entity texture"))
+get.another(pb.adder(e.sargs, get.string),
+            prompt="Enter string arguments")
 
 fd = open(fn, "wb")
 fd.write(level.SerializeToString())
