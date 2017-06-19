@@ -17,6 +17,7 @@
 namespace global {
   const std::string name = "SPLIT";
   const std::string splashfn = "split.mp4";
+  const sf::Time delta = sf::seconds(.03333);
 }
 
 #ifdef DEBUG_BUILD
@@ -64,6 +65,7 @@ int main(int argc, char *argv[])
   file.close();
 
   sf::Clock clock;
+  sf::Time delta;
 
   int paused = 1;
 
@@ -93,8 +95,7 @@ int main(int argc, char *argv[])
 	  active.handleInput(Input::getInput(event, keymap));
 	}
 
-      //sf::Time delta = clock.restart();
-      // FSM
+      delta += clock.restart();
 
       window.setView(defaultView);
 
@@ -110,7 +111,10 @@ int main(int argc, char *argv[])
       
       if (paused == 0) {
 	window.clear(sf::Color::Black);
-	TickResult result = active.tick();
+	if (delta > global::delta) {
+	  delta -= global::delta;
+	  TickResult result = active.tick();
+	}
 	window.draw(active);
       }
       

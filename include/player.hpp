@@ -22,6 +22,7 @@ private:
   sf::Vector2f velocity;
   Mode mode;
   bool visible;
+  int walkCount;
   Facing direction;
   sf::Texture usTexture;
   void updateTexture(int);

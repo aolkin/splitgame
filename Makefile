@@ -40,10 +40,10 @@ setmovie:
 
 nomovie: setnomovie setdebug $(TARGET_EXEC)
 
-run: $(TARGET_EXEC)
+run: build
 	@./$(TARGET_EXEC)
 
-fs: $(TARGET_EXEC)
+fs: build
 	@./$(TARGET_EXEC) --fullscreen
 
 # c++ source

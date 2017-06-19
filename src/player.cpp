@@ -31,20 +31,20 @@ void Player::setMode (Mode nm) {
 void Player::changeVelocity(const sf::Vector2f& v) {
   if (v.x != velocity.x || v.y != velocity.y) {
     velocity += v;
+    if (velocity.x < 0)
+      direction = Facing::Left;
+    else if (velocity.x > 0)
+      direction = Facing::Right;
+    if (velocity.y < 0)
+      direction = Facing::Up;
+    else if (velocity.y > 0)
+      direction = Facing::Down;
   }
-  if (velocity.x < 0)
-    direction = Facing::Left;
-  else if (velocity.x > 0)
-    direction = Facing::Right;
-  if (velocity.y < 0)
-    direction = Facing::Up;
-  else if (velocity.y > 0)
-    direction = Facing::Down;
 }
 
 sf::Vector2f Player::getMove (const BoolVector& v, bool atFeet) const {
   sf::Vector2f tv(velocity.x * v.x, velocity.y * v.y);
-  sf::Vector2f newpos = getPosition() + (tv * 2.f);
+  sf::Vector2f newpos = getPosition() + (tv * 4.f);
   if (atFeet) {
     newpos.y += height / 2;
   }
@@ -70,8 +70,26 @@ void Player::updateTexture (int index) {
   setSheetIndex(index, (int)mode);
 }
 
+#include <iostream>
 void Player::tick () {
-  updateTexture((int)direction);
+  if (velocity == sf::Vector2f()) {
+    walkCount = 0;
+  } else {
+    walkCount++;
+  }
+  int modc;
+  switch ((walkCount / 3) % 4) {
+  case 1:
+    modc = 4;
+    break;
+  case 3:
+    modc = 8;
+    break;
+  default:
+    modc = 0;
+    break;
+  }
+  updateTexture((int)direction + modc);
 }
 
 void Player::drawOn (sf::RenderTarget& target, sf::RenderStates states) const {
