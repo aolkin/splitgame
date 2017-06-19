@@ -38,7 +38,7 @@ setnomovie: cleanmovie
 setmovie:
 	$(eval LDFLAGS += -framework sfeMovie)
 
-nomovie: setnomovie setdebug build
+nomovie: setnomovie setdebug $(TARGET_EXEC)
 
 run: $(TARGET_EXEC)
 	@./$(TARGET_EXEC)
