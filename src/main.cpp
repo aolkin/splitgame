@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
       
       if (paused == 0) {
 	window.clear(sf::Color::Black);
-	active.tick();
+	TickResult result = active.tick();
 	window.draw(active);
       }
       

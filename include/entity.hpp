@@ -10,8 +10,9 @@
 #include "sprite.hpp"
 #include "global.hpp"
 
-enum class ActionType { MovePlayer, ShowDialogue, RestrictInput, CancelMove };
-  
+enum class ActionType { MovePlayer, ShowDialogue, RestrictInput, CancelMove,
+    NewLevel };
+
 struct EntityAction {
   ActionType type;
   union {
@@ -22,6 +23,7 @@ struct EntityAction {
     struct {
       int id;
     } dialogue;
+    NewLevelStruct level;
     InputMode inputMode;
   };
 };

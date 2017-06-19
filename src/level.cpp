@@ -125,7 +125,8 @@ bool Level::noCollisions(const sf::FloatRect& b) const {
   return false;
 };
 
-void Level::tick () {
+TickResult Level::tick () {
+  TickResult res;
   BoolVector okayToMove;
   okayToMove.x = noCollisions(player.getBounds(BoolVector::X));
   okayToMove.y = noCollisions(player.getBounds(BoolVector::Y));
@@ -146,6 +147,9 @@ void Level::tick () {
 	  break;
 	case ActionType::MovePlayer:
 	  break;
+	case ActionType::NewLevel:
+	  res = TickResult(a.level);
+	  break;
 	default:
 	  break;
 	}
@@ -160,6 +164,8 @@ void Level::tick () {
   pos.y = std::max(pos.y, global::height / 2);
   pos.y = std::min(pos.y, room.height - global::height / 2);
   viewport.setCenter(pos);
+
+  return res;
 };
 
 void Level::draw (sf::RenderTarget& target,

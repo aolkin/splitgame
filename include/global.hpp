@@ -12,6 +12,11 @@ namespace global {
   const float height = 270;
 }
 
+struct NewLevelStruct {
+  int id;
+  int start;
+};
+
 #ifdef DEBUG_BUILD
 namespace Debug {
   extern int mode;

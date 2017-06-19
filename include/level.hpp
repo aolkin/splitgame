@@ -13,8 +13,18 @@
 #include "entity.hpp"
 #include "player.hpp"
 
+struct TickResult {
+  enum ResultType { None, NewLevel };
+  ResultType type;
+  union {
+    NewLevelStruct level;
+  };
+  TickResult () : type(None) { };
+  TickResult (NewLevelStruct l) : type(NewLevel), level(l) { };
+};
+
 class Level : public sf::Drawable {
-  Player player;
+  Player& player;
   InputMode mode;
   struct {
     sf::Sprite sprite;
@@ -29,7 +39,7 @@ class Level : public sf::Drawable {
 public:
   Level (Player&, sf::Image&);
   ~Level ();
-  void tick ();
+  TickResult tick ();
   void handleInput (const Input::Event&);
   void draw (sf::RenderTarget&, sf::RenderStates) const;
   static Level load(std::istream&, Player&, int, const EntityFactory&);
