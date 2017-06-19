@@ -1,8 +1,10 @@
 
 #include "player.hpp"
 
-BoolVector BoolVector::X(true, false);
-BoolVector BoolVector::Y(false, true);
+const BoolVector BoolVector::X(true, false);
+const BoolVector BoolVector::Y(false, true);
+const BoolVector BoolVector::TRUE(true);
+const BoolVector BoolVector::FALSE(false);
 
 Player::Player () : Sprite(22, 60), visible(true) {
   //setOrigin(11, 60);
@@ -40,18 +42,21 @@ void Player::changeVelocity(const sf::Vector2f& v) {
     direction = Facing::Down;
 }
 
-sf::Vector2f Player::move (bool doMove, const BoolVector v) {
+sf::Vector2f Player::getMove (const BoolVector& v, bool atFeet) const {
   sf::Vector2f tv(velocity.x * v.x, velocity.y * v.y);
   sf::Vector2f newpos = getPosition() + (tv * 2.f);
-  if (doMove) {
-    setPosition(newpos);
+  if (atFeet) {
+    newpos.y += height / 2;
   }
-  newpos.y += height / 2;
   return newpos;
 }
 
-sf::FloatRect Player::getBounds (const BoolVector& v) {
-  sf::Vector2f pos = move(false, v);
+void Player::move(const BoolVector& v) {
+  setPosition(getMove(v));
+}
+
+sf::FloatRect Player::getBounds (const BoolVector& v) const {
+  sf::Vector2f pos = getMove(v, true);
   return sf::FloatRect(pos.x - width / 2,
 		       pos.y - 10,
 		       width, 10);
@@ -65,8 +70,16 @@ void Player::updateTexture (int index) {
   setSheetIndex(index, (int)mode);
 }
 
-#include <iostream>
 void Player::tick () {
   updateTexture((int)direction);
-  //std::cout << getPosition().x << " " << getPosition().y << std::endl;
+}
+
+void Player::drawOn (sf::RenderTarget& target, sf::RenderStates states) const {
+  Sprite::drawOn(target, states);
+  #ifdef DEBUG_BUILD
+  if (Debug::mode & 4) {
+    Debug::drawRect(getBounds(BoolVector::FALSE), sf::Color::Green,
+		    target, states);
+  }
+  #endif
 }

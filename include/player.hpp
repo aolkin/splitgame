@@ -10,8 +10,10 @@ struct BoolVector {
   bool x, y;
   BoolVector (bool def=true) : x(def), y(def) { };
   BoolVector (bool ix, bool iy) : x(ix), y(iy) { };
-  static BoolVector X;
-  static BoolVector Y;
+  static const BoolVector X;
+  static const BoolVector Y;
+  static const BoolVector TRUE;
+  static const BoolVector FALSE;
   operator bool() const { return x && y; };
 };
 
@@ -23,16 +25,18 @@ private:
   Facing direction;
   sf::Texture usTexture;
   void updateTexture(int);
-public:
+public:;
+  Player ();
   void tick ();
   sf::Vector2f getVelocity () const { return velocity; };
   bool isVisible() const { return visible; };
   void setVisibility(bool);
   void setMode (Mode);
   void changeVelocity (const sf::Vector2f&);
-  sf::Vector2f move (bool, const BoolVector=BoolVector());
-  sf::FloatRect getBounds (const BoolVector&);
-  Player ();
+  sf::Vector2f getMove (const BoolVector& =BoolVector::TRUE, bool=false) const;
+  void move(const BoolVector& =BoolVector::TRUE);
+  sf::FloatRect getBounds (const BoolVector&) const;
+  void drawOn(sf::RenderTarget& target, sf::RenderStates states) const;
 };
 
 #endif

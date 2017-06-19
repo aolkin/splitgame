@@ -38,7 +38,7 @@ Level Level::load(std::istream &stream, Player& p, int start,
       fp.push_back(e.nargs(j));
     }
     for (int j = 0; j < e.sargs_size(); j++) {
-      sp.push_back(e.sargs(i));
+      sp.push_back(e.sargs(j));
     }
     l.entities.push_back(factory.make(e.name(), fp, sp));
   }
@@ -94,30 +94,41 @@ void Level::handleInput (const Input::Event& input) {
   }
 }
 
-bool Level::checkBoundaries (const sf::Vector2f& pos) const {
+bool Level::withinBoundaries (const sf::FloatRect& pbs) const {
+  sf::Vector2f tl(pbs.left, pbs.top);
+  sf::Vector2f tr(pbs.left + pbs.width, pbs.top);
+  sf::Vector2f bl(pbs.left, pbs.top + pbs.height);
+  sf::Vector2f br(pbs.left + pbs.width, pbs.top + pbs.height);
+  BoolVector okaytop = BoolVector(false);
+  BoolVector okaybottom = BoolVector(false);
   for (sf::FloatRect r : bounds) {
-    if (r.contains(pos)) {
+    okaytop.x = okaytop.x || r.contains(tl);
+    okaytop.y = okaytop.y || r.contains(tr);
+    okaybottom.x = okaybottom.x || r.contains(bl);
+    okaybottom.y = okaybottom.y || r.contains(br);
+    if (okaytop && okaybottom) {
       return true;
     }
   }
   return false;
 };
 
-bool Level::noCollisions(const sf::FloatRect& r) const {
-  for (Entity* s : entities) {
-    if (s->hasCollided(r)) {
-      return false;
+bool Level::noCollisions(const sf::FloatRect& b) const {
+  if (withinBoundaries(b)) {
+    for (Entity* s : entities) {
+      if (!s->isPassable() && s->hasCollided(b)) {
+	return false;
+      }
     }
+    return true;
   }
-  return true;
+  return false;
 };
 
 void Level::tick () {
   BoolVector okayToMove;
-  okayToMove.x = (checkBoundaries(player.move(false, BoolVector::X)) &&
-		  noCollisions(player.getBounds(BoolVector::X)));
-  okayToMove.y = (checkBoundaries(player.move(false, BoolVector::Y)) &&
-		  noCollisions(player.getBounds(BoolVector::Y)));
+  okayToMove.x = noCollisions(player.getBounds(BoolVector::X));
+  okayToMove.y = noCollisions(player.getBounds(BoolVector::Y));
   sf::FloatRect newrect = player.getBounds(okayToMove);
     
   for (Entity* s : entities) {
@@ -141,7 +152,7 @@ void Level::tick () {
     }
   }
   
-  player.move(true, okayToMove);
+  player.move(okayToMove);
   player.tick();
   auto pos = player.getPosition();
   pos.x = std::max(pos.x, global::width / 2);
@@ -155,6 +166,15 @@ void Level::draw (sf::RenderTarget& target,
 		  sf::RenderStates states) const {
   target.setView(viewport);
   target.draw(room.sprite, states);
+  
+#ifdef DEBUG_BUILD
+  if (Debug::mode & 1) {
+    for (sf::FloatRect r : bounds) {
+      Debug::drawRect(r, sf::Color::Red, target, states);
+    }
+  }
+#endif
+      
   int lastz = -1;
   for (Entity* s : entities) {
     if (lastz < 0 && s->getZ() > 0) {

@@ -15,8 +15,8 @@ namespace Entities {
     bool impassable;
     sf::Texture t;
   public:
-    Generic (sf::Image&, int, int, int, int=1);
-    bool isPassable() const { return impassable; };
+    Generic (sf::Image&, int, int, float, float, int, int=1);
+    bool isPassable() const { return !impassable; };
     static Entity* makeNew(const std::vector<float>&,
 			   const std::vector<std::string>&);
   };

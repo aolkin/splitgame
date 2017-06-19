@@ -16,18 +16,27 @@ CXX=clang++
 LDFLAGS=-L/usr/local/lib -lsfml-system -lsfml-window -lsfml-graphics -lprotobuf -stdlib=libc++
 CPPFLAGS ?= $(INC_FLAGS) -MMD -MP -Wall -std=c++11 -I/usr/local/include
 
-$(TARGET_EXEC): $(OBJS)
-	$(CXX) $(OBJS) -o $(TARGET_EXEC) $(CXXFLAGS) $(LDFLAGS) -framework sfeMovie
+$(TARGET_EXEC): setdebug setmovie build
+
+build: $(OBJS)
+	$(CXX) $(OBJS) -o $(TARGET_EXEC) $(CXXFLAGS) $(LDFLAGS)
+
+nodebug: build
 
 cleanmovie:
 	$(RM) $(BUILD_DIR)/src/extra/movie.cpp.o
 	$(RM) $(BUILD_DIR)/src/main.cpp.o
 
+setdebug:
+	$(eval CPPFLAGS += -DDEBUG_BUILD)
+
 setnomovie: cleanmovie
 	$(eval CPPFLAGS += -DNO_SFEMOVIE)
 
-nomovie: setnomovie $(OBJS)
-	$(CXX) $(OBJS) -o $(TARGET_EXEC) $(CXXFLAGS) $(LDFLAGS)
+setmovie:
+	$(eval LDFLAGS += -framework sfeMovie)
+
+nomovie: setnomovie setdebug build
 
 run: $(TARGET_EXEC)
 	@./$(TARGET_EXEC)
@@ -45,7 +54,7 @@ $(BUILD_DIR)/%.cc.o: %.cc
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
 
-.PHONY: genclean docbrowse setmovie cleanexe cleanmovie
+.PHONY: genclean docbrowse setmovie cleanexe cleanmovie setdebug setmovie
 
 docs: docbuild docbrowse
 

@@ -4,6 +4,8 @@
 #include <unordered_map>
 #include <SFML/Window.hpp>
 
+#include "global.hpp"
+
 namespace Input {
   enum Inputs { None, Left, Right, Up, Down, Okay, Cancel };
   

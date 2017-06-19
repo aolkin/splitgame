@@ -7,6 +7,7 @@ namespace Entities {
 		    float x, float y, int z,
 		    int impass) :
     Entity(width, height, z), impassable(impass) {
+    setPosition(x, y);
     addDefaultBoundary();
     t.loadFromImage(teximg);
     setTexture(t);

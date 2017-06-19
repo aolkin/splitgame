@@ -21,3 +21,15 @@ bool Entity::hasCollided (const sf::FloatRect& player) {
   }
   return collided;
 }
+
+void Entity::drawOn (sf::RenderTarget& target, sf::RenderStates states) const {
+  Sprite::drawOn(target, states);
+  #ifdef DEBUG_BUILD
+  if (Debug::mode & 2) {
+    for (sf::FloatRect r : bounds) {
+      Debug::drawRect(r, isPassable()?sf::Color::Blue:sf::Color::Yellow,
+		      target, states);
+    }
+  }
+  #endif
+}

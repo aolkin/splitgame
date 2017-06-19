@@ -37,8 +37,9 @@ public:
   Entity (float w, float h, int zz) : Sprite(w,h), z(zz) { };
   virtual bool isSmall() { return false; };
   virtual bool hasCollided(const sf::FloatRect&);
-  virtual bool isPassable() { return true; };
+  virtual bool isPassable() const { return true; };
   virtual std::vector<EntityAction> tick (const sf::FloatRect&);
+  void drawOn(sf::RenderTarget& target, sf::RenderStates states) const;
 };
 
 const std::string ENTITY_ART = "art/entity/";

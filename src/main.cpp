@@ -19,6 +19,22 @@ namespace global {
   const std::string splashfn = "split.mp4";
 }
 
+#ifdef DEBUG_BUILD
+namespace Debug {
+  int mode = 0;
+  
+  void drawRect(const sf::FloatRect& r, const sf::Color& color,
+		sf::RenderTarget& target, sf::RenderStates states) {
+    sf::RectangleShape rect(sf::Vector2f(r.width - 2, r.height - 2));
+    rect.setPosition(r.left + 1, r.top + 1);
+    rect.setOutlineThickness(1);
+    rect.setOutlineColor(color);
+    rect.setFillColor(sf::Color::Transparent);
+    target.draw(rect, states);
+  };
+}
+#endif
+
 int main(int argc, char *argv[])
 {
   using namespace global;

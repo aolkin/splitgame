@@ -15,7 +15,7 @@ namespace Textures {
     Texture () : isInitialized(false) { };
   };
   
-  Texture getEntity(std::string);
+  Texture * getEntity(std::string);
 
 }
 

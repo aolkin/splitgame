@@ -24,7 +24,7 @@ class Level : public sf::Drawable {
   sf::View viewport;
   std::vector<Entity*> entities;
   std::vector<sf::FloatRect> bounds;
-  bool checkBoundaries (const sf::Vector2f&) const;
+  bool withinBoundaries (const sf::FloatRect&) const;
   bool noCollisions (const sf::FloatRect&) const;
 public:
   Level (Player&, sf::Image&);

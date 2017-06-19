@@ -21,8 +21,15 @@ namespace Input {
   }
   
   Event getInput (const sf::Event& event, KeyMap& keymap) {
-    if (event.type == sf::Event::KeyPressed)
+    if (event.type == sf::Event::KeyPressed) {
+      #ifdef DEBUG_BUILD
+      if (event.key.code == sf::Keyboard::PageDown)
+	Debug::mode--;
+      else if (event.key.code == sf::Keyboard::PageUp)
+	Debug::mode++;
+      #endif
       return Event(keymap[event.key.code], false);
+    }
     else if (event.type == sf::Event::KeyReleased)
       return Event(keymap[event.key.code], true);
     else
