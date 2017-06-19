@@ -10,6 +10,8 @@ struct BoolVector {
   bool x, y;
   BoolVector (bool def=true) : x(def), y(def) { };
   BoolVector (bool ix, bool iy) : x(ix), y(iy) { };
+  static BoolVector X;
+  static BoolVector Y;
   operator bool() const { return x && y; };
 };
 
@@ -27,9 +29,9 @@ public:
   bool isVisible() const { return visible; };
   void setVisibility(bool);
   void setMode (Mode);
-  void changeVelocity (sf::Vector2f);
-  sf::Vector2f move (bool, BoolVector=BoolVector());
-  sf::FloatRect getBounds (BoolVector);
+  void changeVelocity (const sf::Vector2f&);
+  sf::Vector2f move (bool, const BoolVector=BoolVector());
+  sf::FloatRect getBounds (const BoolVector&);
   Player ();
 };
 

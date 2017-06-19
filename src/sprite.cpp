@@ -4,9 +4,10 @@
 #include "sprite.hpp"
 
 Sprite::Sprite (float w, float h, bool center):
-  width(w), height(h) {
-  if (center)
+  width(w), height(h), centered(center) {
+  if (center) {
     setOrigin(w / 2, h / 2); // Center origin
+  }
 };
 
 bool Sprite::setSheetIndex (sf::Vector2i index) {

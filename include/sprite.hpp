@@ -10,8 +10,9 @@ class Sprite : public sf::Sprite {
  public:
   Sprite (float, float, bool=true);
   virtual bool isVisible() const { return true; };
-  void drawOn (sf::RenderTarget&, sf::RenderStates) const;
+  virtual void drawOn (sf::RenderTarget&, sf::RenderStates) const;
   const float width, height;
+  const bool centered;
 };
 
 #endif

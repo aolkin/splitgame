@@ -94,20 +94,32 @@ void Level::handleInput (const Input::Event& input) {
   }
 }
 
-bool Level::checkBoundaries (sf::Vector2f pos) {
-  bool okay = false;
+bool Level::checkBoundaries (const sf::Vector2f& pos) const {
   for (sf::FloatRect r : bounds) {
-    okay = okay || r.contains(pos);
+    if (r.contains(pos)) {
+      return true;
+    }
   }
-  return okay;
+  return false;
+};
+
+bool Level::noCollisions(const sf::FloatRect& r) const {
+  for (Entity* s : entities) {
+    if (s->hasCollided(r)) {
+      return false;
+    }
+  }
+  return true;
 };
 
 void Level::tick () {
   BoolVector okayToMove;
-  okayToMove.x = checkBoundaries(player.move(false, BoolVector(true, false)));
-  okayToMove.y = checkBoundaries(player.move(false, BoolVector(false, true)));
+  okayToMove.x = (checkBoundaries(player.move(false, BoolVector::X)) &&
+		  noCollisions(player.getBounds(BoolVector::X)));
+  okayToMove.y = (checkBoundaries(player.move(false, BoolVector::Y)) &&
+		  noCollisions(player.getBounds(BoolVector::Y)));
   sf::FloatRect newrect = player.getBounds(okayToMove);
-  
+    
   for (Entity* s : entities) {
     std::vector<EntityAction> actions = s->tick(newrect);
     for (EntityAction a : actions) {
@@ -115,14 +127,6 @@ void Level::tick () {
 	{
 	case ActionType::CancelMove:
 	  okayToMove.x = false;
-	  okayToMove.y = false;
-	  newrect = player.getBounds(okayToMove);
-	  break;
-	case ActionType::CancelXMove:
-	  okayToMove.x = false;
-	  newrect = player.getBounds(okayToMove);
-	  break;
-	case ActionType::CancelYMove:
 	  okayToMove.y = false;
 	  newrect = player.getBounds(okayToMove);
 	  break;
@@ -153,10 +157,10 @@ void Level::draw (sf::RenderTarget& target,
   target.draw(room.sprite, states);
   int lastz = -1;
   for (Entity* s : entities) {
-    if (lastz < 0 && s->z > 0) {
+    if (lastz < 0 && s->getZ() > 0) {
       player.drawOn(target, states);
     }
-    lastz = s->z;
+    lastz = s->getZ();
     s->drawOn(target, states);
   }
   if (lastz < 0) {

@@ -1,6 +1,9 @@
 
 #include "player.hpp"
 
+BoolVector BoolVector::X(true, false);
+BoolVector BoolVector::Y(false, true);
+
 Player::Player () : Sprite(22, 60), visible(true) {
   //setOrigin(11, 60);
   if (!usTexture.loadFromFile("art/player.png")) {
@@ -23,7 +26,7 @@ void Player::setMode (Mode nm) {
     }
 }
 
-void Player::changeVelocity(sf::Vector2f v) {
+void Player::changeVelocity(const sf::Vector2f& v) {
   if (v.x != velocity.x || v.y != velocity.y) {
     velocity += v;
   }
@@ -37,7 +40,7 @@ void Player::changeVelocity(sf::Vector2f v) {
     direction = Facing::Down;
 }
 
-sf::Vector2f Player::move (bool doMove, BoolVector v) {
+sf::Vector2f Player::move (bool doMove, const BoolVector v) {
   sf::Vector2f tv(velocity.x * v.x, velocity.y * v.y);
   sf::Vector2f newpos = getPosition() + (tv * 2.f);
   if (doMove) {
@@ -47,11 +50,11 @@ sf::Vector2f Player::move (bool doMove, BoolVector v) {
   return newpos;
 }
 
-sf::FloatRect Player::getBounds (BoolVector v) {
+sf::FloatRect Player::getBounds (const BoolVector& v) {
   sf::Vector2f pos = move(false, v);
   return sf::FloatRect(pos.x - width / 2,
-		   pos.y - 10,
-		   width, 10);
+		       pos.y - 10,
+		       width, 10);
 }
 
 void Player::setVisibility(bool v) {

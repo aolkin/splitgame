@@ -10,8 +10,7 @@
 #include "sprite.hpp"
 #include "global.hpp"
 
-enum class ActionType { MovePlayer, ShowDialogue, RestrictInput, CancelMove,
-    CancelXMove, CancelYMove };
+enum class ActionType { MovePlayer, ShowDialogue, RestrictInput, CancelMove };
   
 struct EntityAction {
   ActionType type;
@@ -29,16 +28,23 @@ struct EntityAction {
 
 
 class Entity : public Sprite {
-public:
+protected:
   int z;
-  // TODO: fix this
-  Entity (int zz) : Sprite(0,0), z(zz) { };
+  std::vector<sf::FloatRect> bounds;
+  void addDefaultBoundary();
+public:
+  int getZ() { return z; };
+  Entity (float w, float h, int zz) : Sprite(w,h), z(zz) { };
   virtual bool isSmall() { return false; };
-  virtual std::vector<EntityAction> tick (const sf::FloatRect);
+  virtual bool hasCollided(const sf::FloatRect&);
+  virtual bool isPassable() { return true; };
+  virtual std::vector<EntityAction> tick (const sf::FloatRect&);
 };
 
-typedef Entity* (*MakerFunc)(const std::vector<float>,
-			     const std::vector<std::string>);
+const std::string ENTITY_ART = "art/entity/";
+
+typedef Entity* (*MakerFunc)(const std::vector<float>&,
+			     const std::vector<std::string>&);
 
 class EntityFactory {
 private:
@@ -46,8 +52,8 @@ private:
   void add_entity(const std::string, const MakerFunc&);
 public:
   EntityFactory ();
-  Entity* make(const std::string, const std::vector<float>,
-	       const std::vector<std::string>) const;
+  Entity* make(const std::string&, const std::vector<float>&,
+	       const std::vector<std::string>&) const;
 };
 
 #endif
