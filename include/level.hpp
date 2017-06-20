@@ -2,6 +2,7 @@
 #define LEVEL_H
 
 #include <vector>
+#include <unordered_set>
 #include <iostream>
 #include <fstream>
 #include <memory>
@@ -36,6 +37,7 @@ class Level : public sf::Drawable {
   } room;
   sf::View viewport;
   std::vector<std::shared_ptr<Entity>> entities;
+  std::unordered_set<std::shared_ptr<Entity>> queued_interactions;
   std::vector<sf::FloatRect> bounds;
   bool withinBoundaries (const sf::FloatRect&) const;
   bool noCollisions (const sf::FloatRect&) const;

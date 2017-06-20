@@ -38,31 +38,35 @@ struct EntityAction {
 
 class Entity : public Sprite {
 public:
-  enum TickMode { Silent, SilentRect,
-		  Action, ActionRect };
+  enum TickMode { Silent, SilentInteract, SilentRect,
+		  Action, ActionInteract, ActionRect };
 protected:
   int z;
   TickMode tickMode;
   std::vector<sf::FloatRect> bounds;
+  std::vector<sf::FloatRect> interactive_bounds;
   void addDefaultBoundary();
+  void addInteractiveBoundary(float=10);
 public:
   int getZ() { return z; };
   Entity (float w, float h, int zz, TickMode tickm=Silent) :
     Sprite(w, h, false), z(zz), tickMode(tickm) { };
   virtual bool isSmall() const { return false; };
-  virtual bool hasCollided(const sf::FloatRect&);
+  virtual bool hasCollided(const sf::FloatRect&, bool=false);
   virtual bool isPassable() const { return true; };
   #ifdef DEBUG_BUILD
   virtual sf::Color getDebugRectColor() const;
   #endif
   
   virtual void silentTick() { };
-  virtual void silentTick(const sf::FloatRect&) { };
+  virtual void silentTick(bool) { };
+  virtual void silentTick(bool, const sf::FloatRect&) { };
   virtual EntityAction oneTick() { return EntityAction(); };
-  virtual EntityAction oneTick(const sf::FloatRect&) {
+  virtual EntityAction oneTick(bool) { return EntityAction(); };
+  virtual EntityAction oneTick(bool, const sf::FloatRect&) {
     return EntityAction();
   };
-  virtual std::vector<EntityAction> tick (const sf::FloatRect&);
+  virtual std::vector<EntityAction> tick (bool, const sf::FloatRect&);
   
   void drawOn(sf::RenderTarget& target, sf::RenderStates states) const;
 };

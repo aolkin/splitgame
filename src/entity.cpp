@@ -1,20 +1,27 @@
 
 #include "entity.hpp"
 
-std::vector<EntityAction> Entity::tick (const sf::FloatRect& player) {
+std::vector<EntityAction> Entity::tick (bool interacted,
+					const sf::FloatRect& player) {
   std::vector<EntityAction> v;
   switch (tickMode) {
   case Silent:
     silentTick();
     break;
+  case SilentInteract:
+    silentTick(interacted);
+    break;
   case SilentRect:
-    silentTick(player);
+    silentTick(interacted, player);
     break;
   case Action:
     v.push_back(oneTick());
     break;
+  case ActionInteract:
+    v.push_back(oneTick(interacted));
+    break;
   case ActionRect:
-    v.push_back(oneTick(player));
+    v.push_back(oneTick(interacted, player));
     break;
   }
   return v;
@@ -29,9 +36,21 @@ void Entity::addDefaultBoundary() {
   bounds.push_back(sf::FloatRect(pos, sf::Vector2f(width, height)));
 }
 
-bool Entity::hasCollided (const sf::FloatRect& player) {
+void Entity::addInteractiveBoundary(float margin) {
+  sf::Vector2f pos = getPosition();
+  if (centered) {
+    pos.x -= width / 2;
+    pos.y -= height / 2;
+  }
+  pos.x -= margin;
+  pos.y -= margin;
+  auto size = sf::Vector2f(width + margin * 2, height + margin * 2);
+  interactive_bounds.push_back(sf::FloatRect(pos, size));
+}
+
+bool Entity::hasCollided (const sf::FloatRect& player, bool interactive) {
   bool collided = false;
-  for (sf::FloatRect r : bounds) {
+  for (sf::FloatRect r : (interactive ? interactive_bounds : bounds)) {
     collided = collided || r.intersects(player);
   }
   return collided;
@@ -43,6 +62,9 @@ void Entity::drawOn (sf::RenderTarget& target, sf::RenderStates states) const {
   if (Debug::mode & 2) {
     for (sf::FloatRect r : bounds) {
       Debug::drawRect(r, getDebugRectColor(), target, states);
+    }
+    for (sf::FloatRect r : interactive_bounds) {
+      Debug::drawRect(r, sf::Color::Magenta, target, states);
     }
   }
   #endif

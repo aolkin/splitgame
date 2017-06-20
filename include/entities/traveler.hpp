@@ -15,7 +15,7 @@ namespace Entities {
     Traveler (float, float, float, float, NewLevel);
     static Entity* makeNew(const std::vector<float>&,
 			   const std::vector<std::string>&);
-    EntityAction oneTick(const sf::FloatRect&);
+    EntityAction oneTick(bool, const sf::FloatRect&);
     #ifdef DEBUG_BUILD
     virtual sf::Color getDebugRectColor() const;
     #endif

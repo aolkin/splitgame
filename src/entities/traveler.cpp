@@ -7,6 +7,7 @@ namespace Entities {
     Entity(w, h, -1, Entity::ActionRect), nl(n) {
     setPosition(x, y);
     addDefaultBoundary();
+    addInteractiveBoundary(15);
   };
   
   Entity* Traveler::makeNew(const std::vector<float>& fargs,
@@ -15,8 +16,9 @@ namespace Entities {
 			NewLevel((int)fargs[4], (int)fargs[5]));
   };
 
-  EntityAction Traveler::oneTick(const sf::FloatRect& player) {
-    if (hasCollided(player)) {
+  EntityAction Traveler::oneTick(bool interacted,
+				 const sf::FloatRect& player) {
+    if (interacted || hasCollided(player)) {
       return EntityAction(nl);
     } else {
       return EntityAction();

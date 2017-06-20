@@ -102,7 +102,11 @@ void Level::handleInput (const Input::Event& input) {
 	player.changeVelocity(sf::Vector2f(0, -1) * modifier);
 	break;
       case Input::Okay:
-	// Attempt to Interact
+	for (auto s : entities) {
+	  if (s->hasCollided(player.getBounds(BoolVector::FALSE), true)) {
+	    queued_interactions.insert(s);
+	  };
+	}
 	break;
       default:
 	break;
@@ -149,7 +153,8 @@ TickResult Level::tick () {
   sf::FloatRect newrect = player.getBounds(okayToMove);
     
   for (auto s : entities) {
-    std::vector<EntityAction> actions = s->tick(newrect);
+    std::vector<EntityAction> actions = s->tick(queued_interactions.count(s)>0,
+						newrect);
     for (EntityAction a : actions) {
       switch (a.type)
 	{
@@ -181,6 +186,8 @@ TickResult Level::tick () {
   pos.y = std::min(pos.y, room.height - global::height / 2);
   viewport.setCenter(pos);
 
+  queued_interactions.clear();
+  
   return res;
 };
 
