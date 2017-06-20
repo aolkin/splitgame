@@ -64,15 +64,15 @@ int main(int argc, char *argv[])
   Level active = Level::load(file, player, 0, entity_factory);
   file.close();
 
-  sf::Clock clock;
-  sf::Time delta;
-
   int paused = 1;
 
   bool splash_playing = true;
   paused++;
   Movie splash (window);
   splash.start(global::splashfn);
+  
+  sf::Clock clock;
+  sf::Time delta;
   
   while (window.isOpen())
     {
@@ -112,13 +112,15 @@ int main(int argc, char *argv[])
       if (paused == 0) {
 	window.clear(sf::Color::Black);
 	if (delta > global::delta) {
-	  delta -= global::delta;
 	  TickResult result = active.tick();
 	}
 	window.draw(active);
       }
       
       window.display();
+      if (delta > global::delta) {
+	delta -= global::delta;
+      }
     }
   
   return 0;

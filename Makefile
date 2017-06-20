@@ -23,7 +23,7 @@ all: protobuf build docbuild
 $(TARGET_EXEC): $(OBJS)
 	$(CXX) $(OBJS) -o $(TARGET_EXEC) $(CXXFLAGS) $(LDFLAGS)
 
-nodebug: build
+nodebug: setmovie $(TARGET_EXEC)
 
 cleanmovie:
 	$(RM) $(BUILD_DIR)/src/extra/movie.cpp.o
