@@ -103,4 +103,8 @@ void Player::drawOn (sf::RenderTarget& target, sf::RenderStates states) const {
   #endif
 }
 
-Player player;
+Player& Player::singleton() {
+  static Player player;
+  return player;
+};
+

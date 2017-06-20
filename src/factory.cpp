@@ -21,4 +21,7 @@ std::shared_ptr<Entity> EntityFactory::make(const std::string& type,
   return std::shared_ptr<Entity>(entities.at(type)(params, sparams));
 }
 
-const EntityFactory entity_factory;
+const EntityFactory& EntityFactory::singleton() {
+  static const EntityFactory entity_factory;
+  return entity_factory;
+};

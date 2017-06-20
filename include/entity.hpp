@@ -79,13 +79,13 @@ typedef Entity* (*MakerFunc)(const std::vector<float>&,
 class EntityFactory {
 private:
   std::unordered_map<std::string, MakerFunc> entities;
+  EntityFactory ();
   void add_entity(const std::string, const MakerFunc&);
 public:
-  EntityFactory ();
   std::shared_ptr<Entity> make(const std::string&, const std::vector<float>&,
 			       const std::vector<std::string>&) const;
+  static const EntityFactory& singleton();
 };
 
-const extern EntityFactory entity_factory;
 
 #endif

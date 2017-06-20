@@ -57,7 +57,7 @@ std::unique_ptr<Level> Level::load(std::istream &stream, int start) {
     for (int j = 0; j < e.sargs_size(); j++) {
       sp.push_back(e.sargs(j));
     }
-    l->entities.push_back(entity_factory.make(e.name(), fp, sp));
+    l->entities.push_back(EntityFactory::singleton().make(e.name(), fp, sp));
   }
   
   return l;
@@ -77,9 +77,9 @@ Level::Level (sf::Image& roomImage) : mode(InputMode::None) {
 };
 
 void Level::activatePlayer () {
-  player.setPosition(startPosition);
-  player.setVisibility(playerVisibility);
-  player.setMode(playerMode);
+  Player::singleton().setPosition(startPosition);
+  Player::singleton().setVisibility(playerVisibility);
+  Player::singleton().setMode(playerMode);
 }
 
 void Level::handleInput (const Input::Event& input) {
@@ -90,20 +90,20 @@ void Level::handleInput (const Input::Event& input) {
     switch (input.type)
       {
       case Input::Left:
-	player.changeVelocity(sf::Vector2f(-1, 0) * modifier);
+	Player::singleton().changeVelocity(sf::Vector2f(-1, 0) * modifier);
 	break;
       case Input::Right:
-	player.changeVelocity(sf::Vector2f(1, 0) * modifier);
+	Player::singleton().changeVelocity(sf::Vector2f(1, 0) * modifier);
 	break;
       case Input::Down:
-	player.changeVelocity(sf::Vector2f(0, 1) * modifier);
+	Player::singleton().changeVelocity(sf::Vector2f(0, 1) * modifier);
 	break;
       case Input::Up:
-	player.changeVelocity(sf::Vector2f(0, -1) * modifier);
+	Player::singleton().changeVelocity(sf::Vector2f(0, -1) * modifier);
 	break;
       case Input::Okay:
 	for (auto s : entities) {
-	  if (s->hasCollided(player.getBounds(BoolVector::FALSE), true)) {
+	  if (s->hasCollided(Player::singleton().getBounds(BoolVector::FALSE), true)) {
 	    queued_interactions.insert(s);
 	  };
 	}
@@ -148,9 +148,9 @@ bool Level::noCollisions(const sf::FloatRect& b) const {
 TickResult Level::tick () {
   TickResult res;
   BoolVector okayToMove;
-  okayToMove.x = noCollisions(player.getBounds(BoolVector::X));
-  okayToMove.y = noCollisions(player.getBounds(BoolVector::Y));
-  sf::FloatRect newrect = player.getBounds(okayToMove);
+  okayToMove.x = noCollisions(Player::singleton().getBounds(BoolVector::X));
+  okayToMove.y = noCollisions(Player::singleton().getBounds(BoolVector::Y));
+  sf::FloatRect newrect = Player::singleton().getBounds(okayToMove);
     
   for (auto s : entities) {
     std::vector<EntityAction> actions = s->tick(queued_interactions.count(s)>0,
@@ -161,7 +161,7 @@ TickResult Level::tick () {
 	case ActionType::CancelMove:
 	  okayToMove.x = false;
 	  okayToMove.y = false;
-	  newrect = player.getBounds(okayToMove);
+	  newrect = Player::singleton().getBounds(okayToMove);
 	  break;
 	case ActionType::RestrictInput :
 	  mode = a.inputMode;
@@ -177,9 +177,9 @@ TickResult Level::tick () {
     }
   }
   
-  player.move(okayToMove);
-  player.tick();
-  auto pos = player.getPosition();
+  Player::singleton().move(okayToMove);
+  Player::singleton().tick();
+  auto pos = Player::singleton().getPosition();
   pos.x = std::max(pos.x, global::width / 2);
   pos.x = std::min(pos.x, room.width - global::width / 2);
   pos.y = std::max(pos.y, global::height / 2);
@@ -207,12 +207,12 @@ void Level::draw (sf::RenderTarget& target,
   int lastz = -1;
   for (auto s : entities) {
     if (lastz < 0 && s->getZ() > 0) {
-      player.drawOn(target, states);
+      Player::singleton().drawOn(target, states);
     }
     lastz = s->getZ();
     s->drawOn(target, states);
   }
   if (lastz < 0) {
-    player.drawOn(target, states);
+    Player::singleton().drawOn(target, states);
   }
 };

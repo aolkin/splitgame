@@ -53,6 +53,4 @@ public:
   static std::unique_ptr<Level> load(const std::string&, int);
 };
 
-extern const std::string ROOM_DIR;
-
 #endif

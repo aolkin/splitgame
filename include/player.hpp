@@ -25,9 +25,9 @@ private:
   int walkCount;
   Facing direction;
   sf::Texture usTexture;
+  Player ();
   void updateTexture(int);
 public:;
-  Player ();
   void tick ();
   sf::Vector2f getVelocity () const { return velocity; };
   bool isVisible() const { return visible; };
@@ -38,8 +38,8 @@ public:;
   void move(const BoolVector& =BoolVector::TRUE);
   sf::FloatRect getBounds (const BoolVector&) const;
   void drawOn(sf::RenderTarget& target, sf::RenderStates states) const;
-};
 
-extern Player player;
+  static Player& singleton();
+};
 
 #endif

@@ -156,23 +156,25 @@ int main(int argc, char *argv[])
 	    default:
 	      break;
 	    }
+	    
+	    if (state.fadeProgress <= 0 &&
+		state.level == GameState::FadingIn) {
+	      state.level = GameState::Normal;
+	      state.fadeProgress = 0;
+	    }
+	    if (state.fadeProgress >= 1) {
+	      state.fadeProgress = 1;
+	      state.level = GameState::FadingIn;
+	      // DISCARD OLD LEVEL
+	      state.active = std::move(state.next);
+	      state.active->activatePlayer();
+	    }
 	  }
 	}
 	
 	window.clear(sf::Color::Black);
 	window.draw(*state.active);
 
-	if (state.fadeProgress <= 0 && state.level == GameState::FadingIn) {
-	  state.level = GameState::Normal;
-	  state.fadeProgress = 0;
-	}
-	if (state.fadeProgress >= 1) {
-	  state.fadeProgress = 1;
-	  state.level = GameState::FadingIn;
-	  // DISCARD OLD LEVEL
-	  state.active = std::move(state.next);
-	  state.active->activatePlayer();
-	}
 	if (state.level == GameState::FadingOut ||
 	    state.level == GameState::FadingIn) {
 	  fadeRect.setFillColor(sf::Color(0, 0, 0, 255 * state.fadeProgress));
