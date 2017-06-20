@@ -16,6 +16,9 @@ namespace Entities {
     static Entity* makeNew(const std::vector<float>&,
 			   const std::vector<std::string>&);
     EntityAction oneTick(const sf::FloatRect&);
+    #ifdef DEBUG_BUILD
+    virtual sf::Color getDebugRectColor() const;
+    #endif
   };
   
 }

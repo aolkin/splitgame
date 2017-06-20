@@ -6,8 +6,7 @@ const BoolVector BoolVector::Y(false, true);
 const BoolVector BoolVector::TRUE(true);
 const BoolVector BoolVector::FALSE(false);
 
-Player::Player () : Sprite(22, 60), visible(true) {
-  //setOrigin(11, 60);
+Player::Player () : Sprite(22, 60, true), visible(true) {
   if (!usTexture.loadFromFile("art/player.png")) {
     throw "Failed to load texture.";
   };
@@ -98,6 +97,8 @@ void Player::drawOn (sf::RenderTarget& target, sf::RenderStates states) const {
   if (Debug::mode & 4) {
     Debug::drawRect(getBounds(BoolVector::FALSE), sf::Color::Green,
 		    target, states);
+    Debug::drawRect(sf::FloatRect(getPosition(), sf::Vector2f()),
+		    sf::Color::Green, target, states, -1);
   }
   #endif
 }

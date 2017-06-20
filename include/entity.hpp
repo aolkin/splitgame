@@ -48,10 +48,13 @@ protected:
 public:
   int getZ() { return z; };
   Entity (float w, float h, int zz, TickMode tickm=Silent) :
-    Sprite(w,h), z(zz), tickMode(tickm) { };
+    Sprite(w, h, false), z(zz), tickMode(tickm) { };
   virtual bool isSmall() const { return false; };
   virtual bool hasCollided(const sf::FloatRect&);
   virtual bool isPassable() const { return true; };
+  #ifdef DEBUG_BUILD
+  virtual sf::Color getDebugRectColor() const;
+  #endif
   
   virtual void silentTick() { };
   virtual void silentTick(const sf::FloatRect&) { };

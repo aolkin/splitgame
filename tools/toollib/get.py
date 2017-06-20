@@ -61,7 +61,7 @@ def number(title="Enter a float", positive=False, default=None):
 def string(title="Enter a string", default=None):
     res = None
     while res is None:
-        inp = getq(title, default)
+        res = getq(title, default)
         if not res and default:
             res = default
     return res

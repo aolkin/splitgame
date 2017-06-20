@@ -42,9 +42,14 @@ void Entity::drawOn (sf::RenderTarget& target, sf::RenderStates states) const {
   #ifdef DEBUG_BUILD
   if (Debug::mode & 2) {
     for (sf::FloatRect r : bounds) {
-      Debug::drawRect(r, isPassable()?sf::Color::Blue:sf::Color::Yellow,
-		      target, states);
+      Debug::drawRect(r, getDebugRectColor(), target, states);
     }
   }
   #endif
 }
+
+#ifdef DEBUG_BUILD
+sf::Color Entity::getDebugRectColor () const {
+  return isPassable() ? sf::Color::Blue : sf::Color::Yellow;
+};
+#endif

@@ -45,6 +45,7 @@ public:
   TickResult tick ();
   void handleInput (const Input::Event&);
   void draw (sf::RenderTarget&, sf::RenderStates) const;
+  static std::unique_ptr<Level> load(NewLevel);
   static std::unique_ptr<Level> load(int, int);
   static std::unique_ptr<Level> load(std::istream&, int);
   static std::unique_ptr<Level> load(const std::string&, int);

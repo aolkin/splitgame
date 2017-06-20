@@ -4,7 +4,7 @@
 namespace Entities {
 
   Traveler::Traveler (float w, float h, float x, float y, NewLevel n) :
-    Entity(width, height, -1, Entity::ActionRect), nl(n) {
+    Entity(w, h, -1, Entity::ActionRect), nl(n) {
     setPosition(x, y);
     addDefaultBoundary();
   };
@@ -22,5 +22,11 @@ namespace Entities {
       return EntityAction();
     }
   };
+
+#ifdef DEBUG_BUILD
+  sf::Color Traveler::getDebugRectColor () const {
+    return sf::Color::Cyan;
+  };
+#endif
   
 }

@@ -18,7 +18,16 @@
 namespace global {
   const std::string name = "SPLIT";
   const std::string splashfn = "split.mp4";
-  const sf::Time delta = sf::seconds(.016666);
+
+  /** The game will run in V-sync mode, but will tick the game based on
+   * this constant. */
+  const float FPS = 60.f;
+  /** Length of time to fade out and back in when loading a new level,
+   * in seconds. */
+  const float FADE_SPEED = .6f;
+  
+  const sf::Time delta = sf::seconds(1.f / FPS);
+  const float fade_increment = 2 / (FPS * FADE_SPEED);
 }
 
 #ifdef DEBUG_BUILD
@@ -72,6 +81,9 @@ int main(int argc, char *argv[])
   window.setKeyRepeatEnabled(false);
 
   sf::View defaultView = window.getDefaultView();
+  sf::View scaledView(sf::FloatRect(0, 0, width, height));
+  scaledView.setViewport(sf::FloatRect(0, 0, 1, 1));
+  sf::RectangleShape fadeRect(sf::Vector2f(width, height));
   
   // Initialization  
 
@@ -127,13 +139,19 @@ int main(int argc, char *argv[])
 	  while (dt > global::delta) {
 	    dt -= global::delta;
 	    result = state.active->tick();
+
+	    if (state.level == GameState::Normal &&
+		result.type == TickResult::NewLevel) {
+	      state.next = Level::load(result.level);
+	      state.level = GameState::FadingOut;
+	    }
 	    
 	    switch (state.level) {
 	    case GameState::FadingOut:
-	      state.fadeProgress += .1f;
+	      state.fadeProgress += fade_increment;
 	      break;
 	    case GameState::FadingIn:
-	      state.fadeProgress -= .1f;
+	      state.fadeProgress -= fade_increment;
 	      break;
 	    default:
 	      break;
@@ -144,16 +162,22 @@ int main(int argc, char *argv[])
 	window.clear(sf::Color::Black);
 	window.draw(*state.active);
 
-	if (state.level == GameState::FadingOut ||
-	    state.level == GameState::FadingIn) {
-	  window.clear(sf::Color(0, 0, 0, 255 * state.fadeProgress));
+	if (state.fadeProgress <= 0 && state.level == GameState::FadingIn) {
+	  state.level = GameState::Normal;
+	  state.fadeProgress = 0;
 	}
 	if (state.fadeProgress >= 1) {
+	  state.fadeProgress = 1;
 	  state.level = GameState::FadingIn;
-	  std::cout << state.active.get() << " " << state.next.get() << std::endl;
+	  // DISCARD OLD LEVEL
 	  state.active = std::move(state.next);
-	  std::cout << state.active.get() << " " << state.next.get() << std::endl;
 	  state.active->activatePlayer();
+	}
+	if (state.level == GameState::FadingOut ||
+	    state.level == GameState::FadingIn) {
+	  fadeRect.setFillColor(sf::Color(0, 0, 0, 255 * state.fadeProgress));
+	  window.setView(scaledView);
+	  window.draw(fadeRect);
 	}
 	break;
       }

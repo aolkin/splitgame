@@ -2,6 +2,8 @@
 from pb.level_pb2 import *
 from pb.global_pb2 import *
 
+from google.protobuf.json_format import *
+
 def vector(v, x, y):
     v.x = x
     v.y = y

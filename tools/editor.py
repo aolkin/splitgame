@@ -31,18 +31,34 @@ if get.yesno("Edit boundaries"):
 level.playerVisibility = True
 level.inputMode = pb.Level.Player
 
+def editstart():
+    i = int(get.number("Enter start id"))
+    pb.vector(level.starts[i],
+              get.number("x", default=level.starts[i].x),
+              get.number("y", default=level.starts[i].y))
+
 if get.yesno("Edit player start position"):
-    level.starts[0].x = get.number("x")
-    level.starts[0].y = get.number("y")
+    print("\n".join([
+        "{}:\t".format(i) +
+        str(level.starts[i]).replace("\n","\n\t") for i in level.starts]))
+    get.another(editstart)
 
-e = level.entities.add()
-e.name = get.string("Entity type", "generic")
-get.another(pb.adder(e.nargs, get.number),
-            prompt="Enter float arguments")
-e.sargs.append(get.filename("art/entity", "Select the entity texture"))
-get.another(pb.adder(e.sargs, get.string),
-            prompt="Enter string arguments")
+def addentity():
+    e = level.entities.add()
+    e.name = get.string("Entity type", "generic")
+    get.another(pb.adder(e.nargs, get.number),
+                prompt="Enter float arguments", default=get.Y)
+    if e.name == "generic":
+        e.sargs.append(get.filename("art/entity", "Select the entity texture"))
+    get.another(pb.adder(e.sargs, get.string),
+                prompt="Enter string arguments", default=get.Y)
+get.another(addentity, "Add another entity", prompt="Add an entity")
 
-fd = open(fn, "wb")
-fd.write(level.SerializeToString())
-fd.close()
+print()
+if get.yesno("Display level data"):
+    print(pb.MessageToJson(level))
+
+if get.yesno("Save level data", default=get.Y):
+    fd = open(fn, "wb")
+    fd.write(level.SerializeToString())
+    fd.close()

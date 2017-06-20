@@ -9,6 +9,10 @@
 const std::string ROOM_ART = "art/room/";
 const std::string ROOM_DIR = "rooms/";
 
+std::unique_ptr<Level> Level::load(NewLevel nl) {
+  return load(nl.id, nl.start);
+}
+
 std::unique_ptr<Level> Level::load(int id, int start) {
   std::string sid = std::to_string(id);
   std::string padded = std::string(3 - sid.length(), '0') + sid;
