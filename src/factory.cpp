@@ -2,9 +2,11 @@
 #include "entity.hpp"
 
 #include "entities/generic.hpp"
+#include "entities/traveler.hpp"
   
 EntityFactory::EntityFactory () {
   add_entity("generic", &Entities::Generic::makeNew);
+  add_entity("traveler", &Entities::Traveler::makeNew);
 }
   
 void EntityFactory::add_entity(const std::string s,
