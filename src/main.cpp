@@ -36,6 +36,8 @@ namespace Debug {
 }
 #endif
 
+enum class GameState { Normal, FadingOut, FadingIn, Paused, Movie };
+
 int main(int argc, char *argv[])
 {
   using namespace global;
@@ -110,9 +112,10 @@ int main(int argc, char *argv[])
       }
       
       if (paused == 0) {
+	TickResult result;
 	window.clear(sf::Color::Black);
 	if (delta > global::delta) {
-	  TickResult result = active.tick();
+	  result = active.tick();
 	}
 	window.draw(active);
       }

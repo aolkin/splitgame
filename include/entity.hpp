@@ -32,14 +32,18 @@ struct EntityAction {
 class Entity : public Sprite {
 protected:
   int z;
+  bool silentTickNeedsCollision;
   std::vector<sf::FloatRect> bounds;
   void addDefaultBoundary();
 public:
   int getZ() { return z; };
-  Entity (float w, float h, int zz) : Sprite(w,h), z(zz) { };
-  virtual bool isSmall() { return false; };
+  Entity (float w, float h, int zz, bool stick=false) :
+    Sprite(w,h), z(zz), silentTickNeedsCollision(stick) { };
+  virtual bool isSmall() const { return false; };
   virtual bool hasCollided(const sf::FloatRect&);
   virtual bool isPassable() const { return true; };
+  virtual void silentTick() { };
+  virtual void silentTick(bool) { };
   virtual std::vector<EntityAction> tick (const sf::FloatRect&);
   void drawOn(sf::RenderTarget& target, sf::RenderStates states) const;
 };

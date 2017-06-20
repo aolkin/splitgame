@@ -2,6 +2,11 @@
 #include "entity.hpp"
 
 std::vector<EntityAction> Entity::tick (const sf::FloatRect& player) {
+  if (silentTickNeedsCollision) {
+    silentTick(hasCollided(player));
+  } else {
+    silentTick();
+  }
   return std::vector<EntityAction>();
 }
 

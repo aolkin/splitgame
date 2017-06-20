@@ -19,6 +19,7 @@ namespace Entities {
     bool isPassable() const { return !impassable; };
     static Entity* makeNew(const std::vector<float>&,
 			   const std::vector<std::string>&);
+    void silentTick(bool);
   };
   
 }
