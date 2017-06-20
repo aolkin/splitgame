@@ -5,23 +5,24 @@
 #include <SFML/Graphics.hpp>
 
 enum class InputMode { None, Player, Dialogue, Menu };
-enum class Mode { Unsplit = 0, Creative = 2, Logical = 3 };
+enum class Mode { Creative = 0, Logical = 1, Unsplit = 2 };
 
 namespace global {
   const float width = 480;
   const float height = 270;
 }
 
-struct NewLevelStruct {
+struct NewLevel {
   int id;
   int start;
+  NewLevel (int i, int s) : id(i), start(s) { };
 };
 
 #ifdef DEBUG_BUILD
 namespace Debug {
   extern int mode;
   void drawRect(const sf::FloatRect&, const sf::Color&,
-		sf::RenderTarget& target, sf::RenderStates states);
+		sf::RenderTarget&, sf::RenderStates, int=1);
 }
 #endif
 

@@ -6,7 +6,7 @@ namespace Entities {
   Generic::Generic (sf::Image& teximg, int width, int height,
 		    float x, float y, int z,
 		    int impass) :
-    Entity(width, height, z, true), impassable(impass) {
+    Entity(width, height, z), impassable(impass) {
     setPosition(x, y);
     addDefaultBoundary();
     t.loadFromImage(teximg);
@@ -20,12 +20,6 @@ namespace Entities {
     sf::Vector2u dims = image.getSize();
     return new Generic(image, dims.x, dims.y, fargs[0], fargs[1], -1,
 		       fargs[2]);
-  };
-
-  void Generic::silentTick(bool c) {
-    if (!c) {
-      rotate(10);
-    }
   };
   
 }

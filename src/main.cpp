@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <unordered_map>
+#include <memory>
 
 #include <SFML/Graphics.hpp>
 
@@ -17,7 +18,7 @@
 namespace global {
   const std::string name = "SPLIT";
   const std::string splashfn = "split.mp4";
-  const sf::Time delta = sf::seconds(.03333);
+  const sf::Time delta = sf::seconds(.016666);
 }
 
 #ifdef DEBUG_BUILD
@@ -25,9 +26,11 @@ namespace Debug {
   int mode = 0;
   
   void drawRect(const sf::FloatRect& r, const sf::Color& color,
-		sf::RenderTarget& target, sf::RenderStates states) {
-    sf::RectangleShape rect(sf::Vector2f(r.width - 2, r.height - 2));
-    rect.setPosition(r.left + 1, r.top + 1);
+		sf::RenderTarget& target, sf::RenderStates states,
+		int inset) {
+    sf::RectangleShape rect(sf::Vector2f(r.width - 2 * inset,
+					 r.height - 2 * inset));
+    rect.setPosition(r.left + inset, r.top + inset);
     rect.setOutlineThickness(1);
     rect.setOutlineColor(color);
     rect.setFillColor(sf::Color::Transparent);
@@ -36,7 +39,23 @@ namespace Debug {
 }
 #endif
 
-enum class GameState { Normal, FadingOut, FadingIn, Paused, Movie };
+struct GameState {
+  enum States { Game, Movie };
+  enum LevelStates { Normal, FadingIn, FadingOut };
+  States state;
+  LevelStates level;
+  float fadeProgress;
+  int paused;
+  std::unique_ptr<Level> active;
+  std::unique_ptr<Level> next;
+  class Movie movie;
+  GameState(sf::RenderWindow& w, States s=Game) :
+    state(s), paused(1), movie(w) { };
+  void playMovie(std::string fn) {
+    state = Movie;
+    movie.start(fn);
+  };
+};
 
 int main(int argc, char *argv[])
 {
@@ -58,20 +77,11 @@ int main(int argc, char *argv[])
 
   Input::KeyMap keymap = Input::buildKeymap ();
   
-  EntityFactory entity_factory;
-  
-  Player player;
-  std::ifstream file("rooms/001.dat",
-		     std::ios::in | std::ios::binary);
-  Level active = Level::load(file, player, 0, entity_factory);
-  file.close();
 
-  int paused = 1;
-
-  bool splash_playing = true;
-  paused++;
-  Movie splash (window);
-  splash.start(global::splashfn);
+  GameState state(window);
+  state.playMovie(global::splashfn);
+  state.active = Level::load(1, 0);
+  state.active->activatePlayer();
   
   sf::Clock clock;
   sf::Time delta;
@@ -84,44 +94,72 @@ int main(int argc, char *argv[])
 	  if (event.type == sf::Event::Closed)
 	    window.close();
 	  if (event.type == sf::Event::LostFocus)
-	    paused++;
+	    state.paused++;
 	  if (event.type == sf::Event::GainedFocus)
-	    paused--;
+	    state.paused--;
 	  if (event.type == sf::Event::KeyPressed) {
 	    if (event.key.code == sf::Keyboard::Escape) {
-	      if (splash_playing) {
-		splash.stop();
+	      if (state.state == GameState::Movie) {
+		state.movie.stop();
 	      }
 	    }
 	  }
-	  active.handleInput(Input::getInput(event, keymap));
+	  state.active->handleInput(Input::getInput(event, keymap));
 	}
 
       delta += clock.restart();
 
       window.setView(defaultView);
 
-      if (splash_playing) {
-	splash.update();
-	if (splash.done()) {
-	  splash_playing = false;
-	  paused--;
+      switch (state.state) {
+      case GameState::Movie:
+	state.movie.update();
+	if (state.movie.done()) {
+	  state.state = GameState::Game;
 	} else {
-	  window.draw(splash);
+	  window.draw(state.movie);
 	}
-      }
-      
-      if (paused == 0) {
-	TickResult result;
+	break;
+      case GameState::Game:
+	if (state.paused == 0) {
+	  TickResult result;
+	  sf::Time dt = delta;
+	  while (dt > global::delta) {
+	    dt -= global::delta;
+	    result = state.active->tick();
+	    
+	    switch (state.level) {
+	    case GameState::FadingOut:
+	      state.fadeProgress += .1f;
+	      break;
+	    case GameState::FadingIn:
+	      state.fadeProgress -= .1f;
+	      break;
+	    default:
+	      break;
+	    }
+	  }
+	}
+	
 	window.clear(sf::Color::Black);
-	if (delta > global::delta) {
-	  result = active.tick();
+	window.draw(*state.active);
+
+	if (state.level == GameState::FadingOut ||
+	    state.level == GameState::FadingIn) {
+	  window.clear(sf::Color(0, 0, 0, 255 * state.fadeProgress));
 	}
-	window.draw(active);
+	if (state.fadeProgress >= 1) {
+	  state.level = GameState::FadingIn;
+	  std::cout << state.active.get() << " " << state.next.get() << std::endl;
+	  state.active = std::move(state.next);
+	  std::cout << state.active.get() << " " << state.next.get() << std::endl;
+	  state.active->activatePlayer();
+	}
+	break;
       }
       
       window.display();
-      if (delta > global::delta) {
+      while (delta > global::delta) {
 	delta -= global::delta;
       }
     }

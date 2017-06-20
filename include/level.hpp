@@ -4,6 +4,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <memory>
 
 #include <SFML/Graphics.hpp>
 
@@ -17,14 +18,16 @@ struct TickResult {
   enum ResultType { None, NewLevel };
   ResultType type;
   union {
-    NewLevelStruct level;
+    struct NewLevel level;
   };
   TickResult () : type(None) { };
-  TickResult (NewLevelStruct l) : type(NewLevel), level(l) { };
+  TickResult (struct NewLevel l) : type(NewLevel), level(l) { };
 };
 
 class Level : public sf::Drawable {
-  Player& player;
+  sf::Vector2f startPosition;
+  bool playerVisibility;
+  Mode playerMode;
   InputMode mode;
   struct {
     sf::Sprite sprite;
@@ -32,17 +35,21 @@ class Level : public sf::Drawable {
     float width, height;
   } room;
   sf::View viewport;
-  std::vector<Entity*> entities;
+  std::vector<std::shared_ptr<Entity>> entities;
   std::vector<sf::FloatRect> bounds;
   bool withinBoundaries (const sf::FloatRect&) const;
   bool noCollisions (const sf::FloatRect&) const;
 public:
-  Level (Player&, sf::Image&);
-  ~Level ();
+  Level (sf::Image&);
+  void activatePlayer();
   TickResult tick ();
   void handleInput (const Input::Event&);
   void draw (sf::RenderTarget&, sf::RenderStates) const;
-  static Level load(std::istream&, Player&, int, const EntityFactory&);
+  static std::unique_ptr<Level> load(int, int);
+  static std::unique_ptr<Level> load(std::istream&, int);
+  static std::unique_ptr<Level> load(const std::string&, int);
 };
-  
+
+extern const std::string ROOM_DIR;
+
 #endif

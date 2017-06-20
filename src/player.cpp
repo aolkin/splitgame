@@ -44,7 +44,7 @@ void Player::changeVelocity(const sf::Vector2f& v) {
 
 sf::Vector2f Player::getMove (const BoolVector& v, bool atFeet) const {
   sf::Vector2f tv(velocity.x * v.x, velocity.y * v.y);
-  sf::Vector2f newpos = getPosition() + (tv * 4.f);
+  sf::Vector2f newpos = getPosition() + (tv * 2.f);
   if (atFeet) {
     newpos.y += height / 2;
   }
@@ -78,7 +78,7 @@ void Player::tick () {
     walkCount++;
   }
   int modc;
-  switch ((walkCount / 3) % 4) {
+  switch ((walkCount / 6) % 4) {
   case 1:
     modc = 4;
     break;
@@ -101,3 +101,5 @@ void Player::drawOn (sf::RenderTarget& target, sf::RenderStates states) const {
   }
   #endif
 }
+
+Player player;

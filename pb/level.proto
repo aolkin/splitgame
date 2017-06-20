@@ -6,17 +6,19 @@ import "pb/global.proto";
 
 // Level definition
 message Level {
-  string texture = 1; // Name of background texture file
-
-  // List of rectangles the player will be kept inside of the union of
-  repeated FloatRect bounds = 2;
-  
   enum InputMode {
     None = 0;
     Player = 1;
     Dialogue = 2;
     Menu = 3;
   }
+  
+  string texture = 1; // Name of background texture file
+
+  // List of rectangles the player will be kept inside of the union of
+  repeated FloatRect bounds = 2;
+  
+  PlayerMode playerMode = 5;
   bool playerVisibility = 6;
   InputMode inputMode = 7;
 

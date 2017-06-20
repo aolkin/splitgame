@@ -23,3 +23,9 @@ message Entity {
   repeated float nargs = 10;
   repeated string sargs = 11;
 }
+
+enum PlayerMode {
+  Creative = 0;
+  Logical = 1;
+  Unsplit = 2;
+}

@@ -7,9 +7,22 @@
 #include <algorithm>
 
 const std::string ROOM_ART = "art/room/";
+const std::string ROOM_DIR = "rooms/";
 
-Level Level::load(std::istream &stream, Player& p, int start,
-		  const EntityFactory& factory) {
+std::unique_ptr<Level> Level::load(int id, int start) {
+  std::string sid = std::to_string(id);
+  std::string padded = std::string(3 - sid.length(), '0') + sid;
+  return load(ROOM_DIR + padded + ".dat", start);
+};
+
+std::unique_ptr<Level> Level::load(const std::string& fn, int start) {
+  std::ifstream file(fn, std::ios::in | std::ios::binary);
+  auto l = load(file, start);
+  file.close();
+  return l;
+};
+  
+std::unique_ptr<Level> Level::load(std::istream &stream, int start) {
   pb::Level pbl;
   if (!pbl.ParseFromIstream(&stream)) {
     throw "Failed to parse level!";
@@ -19,16 +32,16 @@ Level Level::load(std::istream &stream, Player& p, int start,
   if (!roomImage.loadFromFile(ROOM_ART + pbl.texture())) {
     throw "Failed to load room image.";
   };
-  Level l(p, roomImage);
+  auto l = std::make_unique<Level>(roomImage);
 
   for (int i = 0; i < pbl.bounds_size(); i++) {
-    l.bounds.push_back(pbToSFRect(pbl.bounds(i)));
+    l->bounds.push_back(pbToSFRect(pbl.bounds(i)));
   }
 
-  l.player.setVisibility(pbl.playervisibility());
-  l.mode = (InputMode)pbl.inputmode();
-
-  l.player.setPosition(pbToSFVector(pbl.starts().at(start)));
+  l->playerVisibility = pbl.playervisibility();
+  l->playerMode = (Mode)pbl.playermode();
+  l->mode = (InputMode)pbl.inputmode();
+  l->startPosition = pbToSFVector(pbl.starts().at(start));
 
   for (int i = 0; i < pbl.entities_size(); i++) {
     pb::Entity e = pbl.entities(i);
@@ -40,14 +53,13 @@ Level Level::load(std::istream &stream, Player& p, int start,
     for (int j = 0; j < e.sargs_size(); j++) {
       sp.push_back(e.sargs(j));
     }
-    l.entities.push_back(factory.make(e.name(), fp, sp));
+    l->entities.push_back(entity_factory.make(e.name(), fp, sp));
   }
   
   return l;
 };
 
-Level::Level (Player& p, sf::Image& roomImage) : player(p),
-						 mode(InputMode::None) {
+Level::Level (sf::Image& roomImage) : mode(InputMode::None) {
   sf::Vector2u roomDims = roomImage.getSize();
   room.width = (float)roomDims.x;
   room.height = (float)roomDims.y;
@@ -60,10 +72,10 @@ Level::Level (Player& p, sf::Image& roomImage) : player(p),
   viewport.setViewport(sf::FloatRect(0, 0, 1, 1));
 };
 
-Level::~Level () {
-  for (Entity* s : entities) {
-    delete s;
-  }
+void Level::activatePlayer () {
+  player.setPosition(startPosition);
+  player.setVisibility(playerVisibility);
+  player.setMode(playerMode);
 }
 
 void Level::handleInput (const Input::Event& input) {
@@ -115,7 +127,7 @@ bool Level::withinBoundaries (const sf::FloatRect& pbs) const {
 
 bool Level::noCollisions(const sf::FloatRect& b) const {
   if (withinBoundaries(b)) {
-    for (Entity* s : entities) {
+    for (auto s : entities) {
       if (!s->isPassable() && s->hasCollided(b)) {
 	return false;
       }
@@ -132,7 +144,7 @@ TickResult Level::tick () {
   okayToMove.y = noCollisions(player.getBounds(BoolVector::Y));
   sf::FloatRect newrect = player.getBounds(okayToMove);
     
-  for (Entity* s : entities) {
+  for (auto s : entities) {
     std::vector<EntityAction> actions = s->tick(newrect);
     for (EntityAction a : actions) {
       switch (a.type)
@@ -182,7 +194,7 @@ void Level::draw (sf::RenderTarget& target,
 #endif
       
   int lastz = -1;
-  for (Entity* s : entities) {
+  for (auto s : entities) {
     if (lastz < 0 && s->getZ() > 0) {
       player.drawOn(target, states);
     }

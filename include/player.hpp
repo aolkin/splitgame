@@ -40,4 +40,6 @@ public:;
   void drawOn(sf::RenderTarget& target, sf::RenderStates states) const;
 };
 
+extern Player player;
+
 #endif

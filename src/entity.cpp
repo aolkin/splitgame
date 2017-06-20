@@ -2,12 +2,22 @@
 #include "entity.hpp"
 
 std::vector<EntityAction> Entity::tick (const sf::FloatRect& player) {
-  if (silentTickNeedsCollision) {
-    silentTick(hasCollided(player));
-  } else {
+  std::vector<EntityAction> v;
+  switch (tickMode) {
+  case Silent:
     silentTick();
+    break;
+  case SilentRect:
+    silentTick(player);
+    break;
+  case Action:
+    v.push_back(oneTick());
+    break;
+  case ActionRect:
+    v.push_back(oneTick(player));
+    break;
   }
-  return std::vector<EntityAction>();
+  return v;
 }
 
 void Entity::addDefaultBoundary() {
