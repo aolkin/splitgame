@@ -4,6 +4,7 @@
 #include "sprite.hpp"
 #include "global.hpp"
 
+enum class Mode { Creative = 0, Logical = 1, Unsplit = 2 };
 enum class Facing { Down = 0, Up = 1, Left = 2, Right = 3 };
 
 struct BoolVector {

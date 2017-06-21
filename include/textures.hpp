@@ -4,19 +4,29 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <memory>
-#include "global.hpp"
+#include <unordered_map>
+#include "player.hpp"
 
-namespace Textures {
+class Texture;
 
-  struct Texture {
-    std::shared_ptr<sf::Texture> texture;
-    sf::Vector2i index;
-    bool isInitialized;
-    Texture () : isInitialized(false) { };
-  };
-  
-  Texture * getEntity(std::string);
+class TextureCache {
+  std::unordered_map<std::string, Texture> cache;
+  Mode mode;
+public:
+  void initialize(Mode m);
+  const Texture& getTexture(std::string) const;
+  static TextureCache& singleton();
+};
 
-}
+class Texture {
+  friend class TextureCache;
+private:
+  bool isInitialized;
+  void initialize(std::string, sf::Vector2i);
+public:
+  std::shared_ptr<sf::Texture> texture;
+  sf::Vector2i index;
+  Texture () : isInitialized(false) { };
+};
 
 #endif

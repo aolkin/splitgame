@@ -5,7 +5,6 @@
 #include <SFML/Graphics.hpp>
 
 enum class InputMode { None, Player, Dialogue, Menu };
-enum class Mode { Creative = 0, Logical = 1, Unsplit = 2 };
 
 namespace global {
   const float width = 480;

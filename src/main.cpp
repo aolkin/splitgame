@@ -88,7 +88,8 @@ int main(int argc, char *argv[])
   // Initialization  
 
   Input::KeyMap keymap = Input::buildKeymap ();
-  
+  Player::singleton();
+  EntityFactory::singleton();
 
   GameState state(window);
   state.playMovie(global::splashfn);
