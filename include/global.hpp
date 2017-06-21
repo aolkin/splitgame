@@ -23,6 +23,7 @@ namespace Debug {
   void drawRect(const sf::FloatRect&, const sf::Color&,
 		sf::RenderTarget&, sf::RenderStates, int=1);
 }
+#include <iostream>
 #endif
 
 #endif

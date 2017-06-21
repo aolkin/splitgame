@@ -60,8 +60,16 @@ $(BUILD_DIR)/%.cc.o: %.cc
 
 docs: docbuild docbrowse
 
+alldocs: alldocbuild alldocbrowse
+
+alldocbuild: Doxyfile
+	@(cat Doxyfile; echo "HTML_OUTPUT = alldocs") | doxygen -
+
 docbuild: Doxyfile
-	@doxygen
+	@(cat Doxyfile; echo "INPUT = include") | doxygen -
+
+alldocbrowse:
+	@open build/alldocs/index.html
 
 docbrowse:
 	@open build/docs/index.html

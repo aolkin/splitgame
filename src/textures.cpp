@@ -1,14 +1,17 @@
 
 #include "textures.hpp"
+#include "player.hpp"
 
 const std::string ART_DIR = "art/";
 
-void Texture::initialize(std::string fn, sf::Vector2i i) {
-  isInitialized = true;
-  index = i;
-  if (!texture->loadFromFile(ART_DIR + fn)) {
-    throw "Failed to load texture for cache.";
+namespace TextureMapping {
+  enum Textures {
+    DialogueBox, DialoguePlayer
   };
+  const std::unordered_map<std::string, Textures> map ({
+      {"dialoguebox", DialogueBox},
+      {"dialogueplayer", DialoguePlayer}
+    });
 }
 
 TextureCache& TextureCache::singleton() {
@@ -16,20 +19,31 @@ TextureCache& TextureCache::singleton() {
   return c;
 }
 
-const Texture& TextureCache::getTexture(std::string name) const {
-  const Texture& t = cache.at(name);
-  if (!t.isInitialized) {
-    throw "Tried to retrieve unitialized texture!";
+std::shared_ptr<sf::Texture> TextureCache::getTexture(std::string fn) {
+  if (cache[fn].expired()) {
+    #ifdef DEBUG_BUILD
+    std::cout << "Texture " << fn << " expired, loading..." << std::endl;
+    #endif
+    
+    std::shared_ptr<sf::Texture> sp = std::make_shared<sf::Texture>();
+    if (!sp->loadFromFile(ART_DIR + fn)) {
+      throw "Failed to load texture!";
+    };
+    cache[fn] = sp;
+    return sp;
+  } else {
+    return cache[fn].lock();
   }
-  return t;
 }
 
-void TextureCache::initialize(Mode m) {
-  if (cache.size() < 1) {
-    Texture& t = cache["dialogue_box"];
-    t.initialize("dialogueboxes.png", sf::Vector2i());
-  }
-  if (cache.size() < 1 || m != mode) {
-    
-  }
+const TexInfo TextureCache::get(std::string name) {
+  using namespace TextureMapping;
+  switch (map.at(name)) {
+  case DialogueBox:
+    return TexInfo(getTexture("dialogue.png"), 0, 0);
+  case DialoguePlayer:
+    return TexInfo(getTexture("dialogue.png"), 294, 0);
+  default:
+    throw "Unknown Texture requested!";
+  };
 }

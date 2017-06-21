@@ -10,12 +10,19 @@ Sprite::Sprite (float w, float h, bool center):
   }
 };
 
+void Sprite::useTexInfo (TexInfo info) {
+  setTexture(*info.texture);
+  texOffset = info.offset;
+  setSheetIndex();
+};
+
 bool Sprite::setSheetIndex (sf::Vector2i index) {
   return setSheetIndex(index.x, index.y);
 };
 
 bool Sprite::setSheetIndex (int x, int y) {
-  setTextureRect(sf::IntRect(x * width, y * height,
+  setTextureRect(sf::IntRect(x * width + texOffset.x,
+			     y * height + texOffset.y,
 			     width, height));
   return true;
 };

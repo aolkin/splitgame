@@ -5,28 +5,20 @@
 #include <string>
 #include <memory>
 #include <unordered_map>
-#include "player.hpp"
 
-class Texture;
-
-class TextureCache {
-  std::unordered_map<std::string, Texture> cache;
-  Mode mode;
-public:
-  void initialize(Mode m);
-  const Texture& getTexture(std::string) const;
-  static TextureCache& singleton();
+struct TexInfo {
+  std::shared_ptr<sf::Texture> texture;
+  sf::Vector2i offset;
+  TexInfo (std::shared_ptr<sf::Texture> t, int x, int y) :
+    texture(t), offset(x, y) { };
 };
 
-class Texture {
-  friend class TextureCache;
-private:
-  bool isInitialized;
-  void initialize(std::string, sf::Vector2i);
+class TextureCache {
+  std::unordered_map<std::string, std::weak_ptr<sf::Texture>> cache;
+  std::shared_ptr<sf::Texture> getTexture(std::string fn);
 public:
-  std::shared_ptr<sf::Texture> texture;
-  sf::Vector2i index;
-  Texture () : isInitialized(false) { };
+  const TexInfo get(std::string);
+  static TextureCache& singleton();
 };
 
 #endif
