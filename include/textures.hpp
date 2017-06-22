@@ -8,12 +8,16 @@
 
 typedef std::shared_ptr<sf::Texture> SharedTexture;
 
+class TextureCache;
+
 struct TexInfo {
   SharedTexture texture;
   sf::Vector2i offset;
+  friend class TextureCache;
+private:
   TexInfo (const SharedTexture& t, int x, int y) :
     texture(t), offset(x, y) { };
-  TexInfo (const SharedTexture& t, const sf::Vector2i& v) :
+  TexInfo (const SharedTexture& t, const sf::Vector2i& v = sf::Vector2i()) :
     texture(t), offset(v) { };
 };
 

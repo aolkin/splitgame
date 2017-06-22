@@ -12,6 +12,8 @@ DEPS := $(OBJS:.o=.d)
 INC_DIRS := include $(GEN_DIR)
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
+MKDIR_P ?= mkdir -p
+
 CXX=clang++
 LDFLAGS=-L/usr/local/lib -lsfml-system -lsfml-window -lsfml-graphics -lprotobuf -stdlib=libc++
 CPPFLAGS ?= $(INC_FLAGS) -MMD -MP -Wall -std=c++14 -I/usr/local/include
@@ -46,6 +48,8 @@ run: build
 fs: build
 	@./$(TARGET_EXEC) --fullscreen
 
+-include $(DEPS)
+
 # c++ source
 $(BUILD_DIR)/%.cpp.o: %.cpp
 	@$(MKDIR_P) $(dir $@)
@@ -73,6 +77,8 @@ alldocbrowse:
 
 docbrowse:
 	@open build/docs/index.html
+
+### Protocol buffers
 
 PB_SRCS := $(shell find -E pb -regex '.*/[a-zA-Z0-9_]+\.proto')
 PB_H := $(PB_SRCS:%.proto=$(GEN_DIR)/%.pb.h)
@@ -109,6 +115,5 @@ genclean:
 
 cleanall: clean cleangen
 
--include $(DEPS)
-
-MKDIR_P ?= mkdir -p
+lines:
+	@wc -l include/* include/*/* src/* src/*/* tools/* tools/*/* pb/* 2>/dev/null; true

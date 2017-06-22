@@ -8,7 +8,8 @@ namespace TextureMapping {
   struct Info {
     std::string fn;
     sf::Vector2i os;
-    Info (const std::string f, int x, int y) : fn(f), os(x, y) { };
+    Info (const std::string& f) : fn(f) { };
+    Info (const std::string& f, int x, int y) : fn(f), os(x, y) { };
   };
     
   const std::unordered_map<std::string, Info> map ({
@@ -40,7 +41,10 @@ SharedTexture TextureCache::getTexture(const std::string& fn) {
 }
 
 const TexInfo TextureCache::get(const std::string& name) {
-  using namespace TextureMapping;
-  Info info = map.at(name);
-  return TexInfo(getTexture(info.fn), info.os);
+  try {
+    TextureMapping::Info info = TextureMapping::map.at(name);
+    return TexInfo(getTexture(info.fn), info.os);
+  } catch (std::out_of_range) {
+    return TexInfo(getTexture(name));
+  }
 }

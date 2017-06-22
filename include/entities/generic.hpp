@@ -6,16 +6,15 @@
 namespace Entities {
 
   /**
-   * # Floats: x, y, impassable
+   * # Floats: x, y, width, height, impassable, z = -1
    *
    * # Strings: texture file
    */
   class Generic : public Entity {
   private:
     bool impassable;
-    sf::Texture t;
   public:
-    Generic (sf::Image&, int, int, float, float, int, int=1);
+    Generic (std::string, int, int, float, float, int, int=1);
     bool isPassable() const { return !impassable; };
     static Entity* makeNew(const std::vector<float>&,
 			   const std::vector<std::string>&);

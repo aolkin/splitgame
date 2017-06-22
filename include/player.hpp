@@ -25,7 +25,6 @@ private:
   bool visible;
   int walkCount;
   Facing direction;
-  sf::Texture usTexture;
   Player ();
   void updateTexture(int);
 public:;
@@ -38,7 +37,7 @@ public:;
   sf::Vector2f getMove (const BoolVector& =BoolVector::TRUE, bool=false) const;
   void move(const BoolVector& =BoolVector::TRUE);
   sf::FloatRect getBounds (const BoolVector&) const;
-  void drawOn(sf::RenderTarget& target, sf::RenderStates states) const;
+  void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
   static Player& singleton();
 };

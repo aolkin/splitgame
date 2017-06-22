@@ -207,12 +207,12 @@ void Level::draw (sf::RenderTarget& target,
   int lastz = -1;
   for (auto s : entities) {
     if (lastz < 0 && s->getZ() > 0) {
-      Player::singleton().drawOn(target, states);
+      target.draw(Player::singleton(), states);
     }
     lastz = s->getZ();
-    s->drawOn(target, states);
+    target.draw(*s, states);
   }
   if (lastz < 0) {
-    Player::singleton().drawOn(target, states);
+    target.draw(Player::singleton(), states);
   }
 };

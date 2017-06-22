@@ -7,24 +7,12 @@ const BoolVector BoolVector::TRUE(true);
 const BoolVector BoolVector::FALSE(false);
 
 Player::Player () : Sprite(22, 60, true), visible(true) {
-  if (!usTexture.loadFromFile("art/player.png")) {
-    throw "Failed to load texture.";
-  };
+  useCachedTexture("player.png");
   setMode(Mode::Unsplit);
 };
 
 void Player::setMode (Mode nm) {
   mode = nm;
-  switch (mode)
-    {
-    case Mode::Creative:
-      break;
-    case Mode::Logical:
-      break;
-    default:
-      setTexture(usTexture);
-      break;
-    }
 }
 
 void Player::changeVelocity(const sf::Vector2f& v) {
@@ -69,7 +57,6 @@ void Player::updateTexture (int index) {
   setSheetIndex(index, (int)mode);
 }
 
-#include <iostream>
 void Player::tick () {
   if (velocity == sf::Vector2f()) {
     walkCount = 0;
@@ -91,8 +78,8 @@ void Player::tick () {
   updateTexture((int)direction + modc);
 }
 
-void Player::drawOn (sf::RenderTarget& target, sf::RenderStates states) const {
-  Sprite::drawOn(target, states);
+void Player::draw (sf::RenderTarget& target, sf::RenderStates states) const {
+  Sprite::draw(target, states);
   #ifdef DEBUG_BUILD
   if (Debug::mode & 4) {
     Debug::drawRect(getBounds(BoolVector::FALSE), sf::Color::Green,

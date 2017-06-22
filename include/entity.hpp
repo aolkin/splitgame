@@ -68,7 +68,7 @@ public:
   };
   virtual std::vector<EntityAction> tick (bool, const sf::FloatRect&);
   
-  void drawOn(sf::RenderTarget& target, sf::RenderStates states) const;
+  void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 };
 
 const std::string ENTITY_ART = "art/entity/";

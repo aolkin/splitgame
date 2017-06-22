@@ -56,8 +56,8 @@ bool Entity::hasCollided (const sf::FloatRect& player, bool interactive) {
   return collided;
 }
 
-void Entity::drawOn (sf::RenderTarget& target, sf::RenderStates states) const {
-  Sprite::drawOn(target, states);
+void Entity::draw (sf::RenderTarget& target, sf::RenderStates states) const {
+  Sprite::draw(target, states);
   #ifdef DEBUG_BUILD
   if (Debug::mode & 2) {
     for (sf::FloatRect r : bounds) {
