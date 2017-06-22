@@ -77,7 +77,7 @@ void Player::tick () {
     walkCount++;
   }
   int modc;
-  switch ((walkCount / 6) % 4) {
+  switch ((walkCount / 10) % 4) {
   case 1:
     modc = 4;
     break;

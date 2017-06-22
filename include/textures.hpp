@@ -6,18 +6,22 @@
 #include <memory>
 #include <unordered_map>
 
+typedef std::shared_ptr<sf::Texture> SharedTexture;
+
 struct TexInfo {
-  std::shared_ptr<sf::Texture> texture;
+  SharedTexture texture;
   sf::Vector2i offset;
-  TexInfo (std::shared_ptr<sf::Texture> t, int x, int y) :
+  TexInfo (const SharedTexture& t, int x, int y) :
     texture(t), offset(x, y) { };
+  TexInfo (const SharedTexture& t, const sf::Vector2i& v) :
+    texture(t), offset(v) { };
 };
 
 class TextureCache {
   std::unordered_map<std::string, std::weak_ptr<sf::Texture>> cache;
-  std::shared_ptr<sf::Texture> getTexture(std::string fn);
+  SharedTexture getTexture(const std::string& fn);
 public:
-  const TexInfo get(std::string);
+  const TexInfo get(const std::string&);
   static TextureCache& singleton();
 };
 

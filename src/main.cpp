@@ -56,10 +56,10 @@ struct GameState {
   float fadeProgress;
   int paused;
   std::unique_ptr<Level> active;
-  std::unique_ptr<Level> next;
+  NewLevel next;
   class Movie movie;
   GameState(sf::RenderWindow& w, States s=Game) :
-    state(s), paused(1), movie(w) { };
+    state(s), paused(1), next(0, 0), movie(w) { };
   void playMovie(std::string fn) {
     state = Movie;
     movie.start(fn);
@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
 
 	    if (state.level == GameState::Normal &&
 		result.type == TickResult::NewLevel) {
-	      state.next = Level::load(result.level);
+	      state.next = result.level;
 	      state.level = GameState::FadingOut;
 	    }
 	    
@@ -166,8 +166,9 @@ int main(int argc, char *argv[])
 	    if (state.fadeProgress >= 1) {
 	      state.fadeProgress = 1;
 	      state.level = GameState::FadingIn;
+	      std::unique_ptr<Level> next = Level::load(state.next);
 	      // DISCARD OLD LEVEL
-	      state.active = std::move(state.next);
+	      state.active = std::move(next);
 	      state.active->activatePlayer();
 	    }
 	  }

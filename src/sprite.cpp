@@ -10,8 +10,9 @@ Sprite::Sprite (float w, float h, bool center):
   }
 };
 
-void Sprite::useTexInfo (TexInfo info) {
-  setTexture(*info.texture);
+void Sprite::useTexInfo (const TexInfo& info) {
+  sharedTex = info.texture;
+  setTexture(*sharedTex);
   texOffset = info.offset;
   setSheetIndex();
 };

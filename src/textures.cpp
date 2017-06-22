@@ -5,12 +5,15 @@
 const std::string ART_DIR = "art/";
 
 namespace TextureMapping {
-  enum Textures {
-    DialogueBox, DialoguePlayer
+  struct Info {
+    std::string fn;
+    sf::Vector2i os;
+    Info (const std::string f, int x, int y) : fn(f), os(x, y) { };
   };
-  const std::unordered_map<std::string, Textures> map ({
-      {"dialoguebox", DialogueBox},
-      {"dialogueplayer", DialoguePlayer}
+    
+  const std::unordered_map<std::string, Info> map ({
+      {"dialoguebox", Info("dialogue.png", 0, 0)},
+      {"dialogueplayer", Info("dialogue.png", 294, 0)}
     });
 }
 
@@ -19,13 +22,13 @@ TextureCache& TextureCache::singleton() {
   return c;
 }
 
-std::shared_ptr<sf::Texture> TextureCache::getTexture(std::string fn) {
+SharedTexture TextureCache::getTexture(const std::string& fn) {
   if (cache[fn].expired()) {
     #ifdef DEBUG_BUILD
     std::cout << "Texture " << fn << " expired, loading..." << std::endl;
     #endif
     
-    std::shared_ptr<sf::Texture> sp = std::make_shared<sf::Texture>();
+    SharedTexture sp = std::make_shared<sf::Texture>();
     if (!sp->loadFromFile(ART_DIR + fn)) {
       throw "Failed to load texture!";
     };
@@ -36,14 +39,8 @@ std::shared_ptr<sf::Texture> TextureCache::getTexture(std::string fn) {
   }
 }
 
-const TexInfo TextureCache::get(std::string name) {
+const TexInfo TextureCache::get(const std::string& name) {
   using namespace TextureMapping;
-  switch (map.at(name)) {
-  case DialogueBox:
-    return TexInfo(getTexture("dialogue.png"), 0, 0);
-  case DialoguePlayer:
-    return TexInfo(getTexture("dialogue.png"), 294, 0);
-  default:
-    throw "Unknown Texture requested!";
-  };
+  Info info = map.at(name);
+  return TexInfo(getTexture(info.fn), info.os);
 }
