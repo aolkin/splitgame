@@ -51,7 +51,6 @@ public:
   int getZ() { return z; };
   Entity (float w, float h, int zz, TickMode tickm=Silent) :
     Sprite(w, h, false), z(zz), tickMode(tickm) { };
-  virtual bool isSmall() const { return false; };
   virtual bool hasCollided(const sf::FloatRect&, bool=false);
   virtual bool isPassable() const { return true; };
   #ifdef DEBUG_BUILD

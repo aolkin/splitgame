@@ -19,6 +19,7 @@ message FloatRect {
 // They can also have float and string arguments
 message Entity {
   string name = 1;
+  string identifier = 2;
   
   repeated float nargs = 10;
   repeated string sargs = 11;

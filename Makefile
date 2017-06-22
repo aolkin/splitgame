@@ -112,6 +112,7 @@ cleangen: genclean
 genclean:
 	$(RM) -r $(GEN_DIR)
 	$(MKDIR_P) $(GEN_DIR)
+	touch $(GEN_DIR)/.gitkeep
 
 cleanall: clean cleangen
 
