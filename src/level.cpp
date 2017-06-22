@@ -45,7 +45,14 @@ std::unique_ptr<Level> Level::load(std::istream &stream, int start) {
   l->playerVisibility = pbl.playervisibility();
   l->playerMode = (Mode)pbl.playermode();
   l->mode = (InputMode)pbl.inputmode();
-  l->startPosition = pbToSFVector(pbl.starts().at(start));
+  if (start >= pbl.positions_size()) {
+    #ifdef DEBUG_BUILD
+    std::cout << "Attempting to go to nonexistent starting position!"
+	      << std::endl;
+    #endif
+    start = 0;
+  }
+  l->startPosition = pbToSFVector(pbl.positions(start));
 
   for (int i = 0; i < pbl.entities_size(); i++) {
     pb::Entity e = pbl.entities(i);

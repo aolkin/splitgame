@@ -42,10 +42,12 @@ def load(level, fn):
     fd = open(fn, "rb")
     level.ParseFromString(fd.read())
     fd.close()
+    return fn
 
 def revert(level, fn):
     if get.yesno("Discard changes without saving", default=get.Y):
         load(level, fn)
+        return fn
             
 def background(level, fn):
     oldt = level.texture
@@ -67,14 +69,15 @@ def bounds(level, fn):
                         get.number("height", True)))
 
 def starts(level, fn):
-    menu = map(lambda x: "({}, {})".format(x.x, x.y), level.starts.values())
+    menu = map(lambda x: "({}, {})".format(x.x, x.y), level.positions)
     start = get.menu(menu, "Select a start position",
                      create="add a start position...", value=False)
     if start < 0:
-        start = len(level.starts)
-    pb.vector(level.starts[staert],
-              get.number("X coordinate", default=level.starts[i].x),
-              get.number("Y coordinate", default=level.starts[i].y))
+        start = len(level.positions)
+        level.positions.add()
+    pb.vector(level.positions[start],
+              get.number("X coordinate", default=level.positions[start].x),
+              get.number("Y coordinate", default=level.positions[start].y))
 
 def entities(level, fn):
     menu = map(lambda x: "{} ({})".format(x.identifier, x.name),
@@ -105,7 +108,7 @@ def save_as(level, fn):
     return save(level, fn)
 
 def display(level, fn):
-    out.less(pb.MessageToJson(level))
+    put.less(pb.MessageToJson(level))
     return False
     
 MENU =  get.make_menu(

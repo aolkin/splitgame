@@ -23,7 +23,10 @@ message Level {
   InputMode inputMode = 7;
 
   // Possible locations for the player upon entry to the room
-  map<int32, Vector2f> starts = 8;
+  reserved 8;
+  reserved "starts";
+  //map<int32, Vector2f> starts = 8;
+  repeated Vector2f positions = 9;
 
   repeated Entity entities = 11; // List of entities within the room
 

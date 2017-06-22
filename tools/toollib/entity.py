@@ -20,32 +20,43 @@ class Wrapper:
     def check(self, e):
         return (len(e.nargs) >= self.nargs and
                 len(e.sargs) >= self.sargs)
-    
-    def editnargs(self, e):
+
+    def editargs(self, e, attr, getter):
         print("\nOld values: ", end="")
-        print(", ".join([str(i) for i in e.nargs]), end="\n\n")
-        del e.nargs[:]
+        print(", ".join([str(i) for i in getattr(e, attr)]), end="\n\n")
+        del getattr(e, attr)[:]
         while True:
             try:
-                e.nargs.append(get.number())
+                getattr(e, attr).append(getter())
             except get.Cancel:
-                if (len(e.nargs) >= self.nargs or
+                if (len(getattr(e, attr)) >= getattr(self, attr) or
                     get.yesno("\nEntity is missing arguments, stop")):
                         return
+    
+    def editnargs(self, e):
+        self.editargs(e, "nargs", get.number)
     editnargs.dirty = True
             
     def editsargs(self, e):
-        print("\nOld values: ", end="")
-        print(", ".join([str(i) for i in e.sargs]), end="\n\n")
-        del e.sargs[:]
-        while True:
-            try:
-                e.sargs.append(get.string())
-            except get.Cancel:
-                if (len(e.sargs) >= self.sargs or
-                    get.yesno("\nEntity is missing arguments, stop")):
-                        return
+        self.editargs(e, "sargs", get.string)
     editsargs.dirty = True
+
+    def editindividual(self, e, attr, getter):
+        i = get.menu(getattr(e, attr), "Choose an argument to edit",
+                     value=False, create="add an argument...")
+        if i < 0:
+            getattr(e, attr).append(getter())
+            return True
+        else:
+            oldval = getattr(e, attr)[i]
+            getattr(e, attr)[i] = getter(default=oldval)
+            return oldval != getattr(e, attr)[i]
+            
+    def editfloat(self, e):
+        self.editindividual(e, "nargs", get.number)
+        
+    def editstring(self, e):
+        self.editindividual(e, "sargs", get.string)
 
     def name(self, e):
         oldname = e.name
@@ -67,8 +78,8 @@ class Wrapper:
             ("Display Entity Data", self.display),
             ("edit entity type...", self.name),
             ("edit entity reference name...", self.ident),
-            #("edit float argument...", self.editfloat),
-            #("edit string argument...", self.editstring),
+            ("edit float argument...", self.editfloat),
+            ("edit string argument...", self.editstring),
             ("re-enter float arguments...", self.editnargs),
             ("re-enter string arguments...", self.editsargs)
         )
