@@ -22,12 +22,30 @@ class Wrapper:
                 len(e.sargs) >= self.sargs)
     
     def editnargs(self, e):
-        get.another(pb.adder(e.nargs, get.number),
-                    prompt="Enter float arguments", default=get.Y)
-    
+        print("\nOld values: ", end="")
+        print(", ".join([str(i) for i in e.nargs]), end="\n\n")
+        del e.nargs[:]
+        while True:
+            try:
+                e.nargs.append(get.number())
+            except get.Cancel:
+                if (len(e.nargs) >= self.nargs or
+                    get.yesno("\nEntity is missing arguments, stop")):
+                        return
+    editnargs.dirty = True
+            
     def editsargs(self, e):
-        get.another(pb.adder(e.sargs, get.string),
-                    prompt="Enter string arguments", default=get.Y)
+        print("\nOld values: ", end="")
+        print(", ".join([str(i) for i in e.sargs]), end="\n\n")
+        del e.sargs[:]
+        while True:
+            try:
+                e.sargs.append(get.string())
+            except get.Cancel:
+                if (len(e.sargs) >= self.sargs or
+                    get.yesno("\nEntity is missing arguments, stop")):
+                        return
+    editsargs.dirty = True
 
     def name(self, e):
         oldname = e.name
@@ -51,8 +69,8 @@ class Wrapper:
             ("edit entity reference name...", self.ident),
             #("edit float argument...", self.editfloat),
             #("edit string argument...", self.editstring),
-            #("re-enter float arguments...", self.editnargs),
-            #("re-enter string arguments...", self.editsargs)
+            ("re-enter float arguments...", self.editnargs),
+            ("re-enter string arguments...", self.editsargs)
         )
     
 class Generic(Wrapper):
@@ -95,7 +113,11 @@ def edit(e):
         try:
             f = get.menu(getwrapper(e).menu()).data
             try:
-                dirty = f(e) or dirty
+                if hasattr(f, "dirty"):
+                    dirty = True
+                    f(e)
+                else:
+                    dirty = f(e) or dirty
                 put.clear()
             except get.Cancel:
                 put.clear()

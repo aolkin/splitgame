@@ -23,14 +23,17 @@ def make_menu(*args, backwards=False):
                      if backwards else MenuChoice(x[0], x[1]),
                  args))
 
-def getq(title, default=None):
+def getq(title, default=None, ending=FILLIN_ENDING):
     print(DEFAULT_FORMAT.format(title, default) if default else title,
-          end=FILLIN_ENDING)
+          end=ending)
     try:
         return input()
     except EOFError as e:
         raise Cancel()
 
+def goon(title="Press enter to continue"):
+    getq(title, ending="...")
+    
 ## Offers a list of choices to the user and allows them to enter the
 #  number corresponding to their choice.
 # \param choices Iterable of choices, will be displayed as strings.
@@ -107,13 +110,12 @@ Y = "y"
 ## False value for get.yesno, can be used as a default
 N = "n"
 CHOICES = { Y : True, N : False }
-def yesno(title="Are you sure", yesno=" [{y}/{n}]", default=N):
+def yesno(title="Are you sure", yesno="{y}/{n}", default=N):
     yn = yesno.format(y=Y.upper() if default == Y else Y,
                       n=N.upper() if default == N else N)
     res = False
     while not res:
-        print(title + yn, end=QUESTION_ENDING)
-        res = input().lower()
+        res = getq(title, yn, ending=QUESTION_ENDING).lower()
         if not res:
             res = default
         elif len(res) > 1:

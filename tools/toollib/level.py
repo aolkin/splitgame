@@ -8,20 +8,15 @@ def edit():
     fn = get.filename("rooms", "Select a level",
                       complete=True, create="new level...")
     level = pb.Level()
-    try:
-        fd = open(fn, "rb")
-        level.ParseFromString(fd.read())
-        fd.close()
-        parsed = True
-    except Exception:
-        parsed = False
+    load(level, fn)
     done = False
     dirty = False
     put.clear()
     while not done:
         print("\nEditing {0}{1}:".format(fn, " * " if dirty else ""))
         try:
-            f = get.menu(MAIN_MENU, "Choose an action").data
+            f = get.menu(DIRTY_MENU if dirty else MENU,
+                         "Choose an action").data
             try:
                 newfn = f(level, fn)
                 if type(newfn) == str:
@@ -41,7 +36,17 @@ def edit():
                 except get.Cancel:
                     pass
             done = True
+    return True
+            
+def load(level, fn):
+    fd = open(fn, "rb")
+    level.ParseFromString(fd.read())
+    fd.close()
 
+def revert(level, fn):
+    if get.yesno("Discard changes without saving", default=get.Y):
+        load(level, fn)
+            
 def background(level, fn):
     oldt = level.texture
     level.texture = get.filename("art/room", "Select the background image",
@@ -103,14 +108,18 @@ def display(level, fn):
     out.less(pb.MessageToJson(level))
     return False
     
-MAIN_MENU =  get.make_menu(
-    ("Save", save),
-    ("Save As", save_as),
-    ("Display Data", display),
+MENU =  get.make_menu(
     ("edit background...", background),
     ("edit player visibility...", visibility),
     ("edit boundaries...", bounds),
     ("edit start positions...", starts),
     ("edit entities...", entities),
+    ("Display Data", display)
+)
+
+DIRTY_MENU = MENU + get.make_menu(
+    ("Revert to Saved", revert),
+    ("Save", save),
+    ("Save As", save_as),
 )
 
