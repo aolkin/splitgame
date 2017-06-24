@@ -4,13 +4,36 @@ from . import get, pb, entity, put
 import os, subprocess
 
 def edit():
-    put.clear()
-    fn = get.filename("rooms", "Select a level",
-                      complete=True, create="new level...")
+    while True:
+        try:
+            put.clear()
+            fn = get.filename("rooms", "Select a level",
+                              complete=True, create="new level...")
+            if not fn.endswith(".dat"):
+                fn += ".dat"
+            editmenu(fn)
+        except get.Cancel:
+            return True
+
+def editmenu(fn):
     level = pb.Level()
-    load(level, fn)
+    dirty = load(level, fn) == True
+    if dirty:
+        put.clear()
+        print("\nCreating level {}.".format(fn),
+              "Please enter all required information:")
+        try:
+            background(level, fn)
+            bounds(level, fn)
+            starts(level, fn)
+            visibility(level, fn)
+        except get.Cancel:
+            print("\n\nCancelled level creation...\n")
+            get.goon()
+            return False
+        print("\nRequired information entered...\n")
+        get.goon()
     done = False
-    dirty = False
     put.clear()
     while not done:
         print("\nEditing {0}{1}:".format(fn, " * " if dirty else ""))
@@ -39,15 +62,22 @@ def edit():
     return True
             
 def load(level, fn):
-    fd = open(fn, "rb")
-    level.ParseFromString(fd.read())
-    fd.close()
-    return fn
+    try:
+        fd = open(fn, "rb")
+        level.ParseFromString(fd.read())
+        fd.close()
+        return fn
+    except FileNotFoundError:
+        return True
 
 def revert(level, fn):
     if get.yesno("Discard changes without saving", default=get.Y):
-        load(level, fn)
-        return fn
+        if load(level, fn) != True:
+            return fn
+        else:
+            print("\nFile does not exist, cannot revert...\n")
+            get.goon()
+    return True
             
 def background(level, fn):
     oldt = level.texture
@@ -56,28 +86,40 @@ def background(level, fn):
     if oldt == level.texture:
         return False
 
-## Edit level boundary rectangles
-# \todo Make this nice
 def bounds(level, fn):
-    print("\n".join([str(i) for i in level.bounds]))
-    del level.bounds[:]
-    get.another(lambda:
-                pb.rect(level.bounds.add(),
-                        get.number("x"),
-                        get.number("y"),
-                        get.number("width", True),
-                        get.number("height", True)))
+    if len(level.bounds):
+        menu = map(lambda r: " {}x{} at ({}, {})".format(
+            r.size.x, r.size.y, r.pos.x, r.pos.y), level.bounds)
+        index = get.menu(menu, "Select a boundary",
+                         create="add a boundary...", value=False)
+    else:
+        print("\nAdd a new boundary:")
+        index = -1
+    if index < 0:
+        index = len(level.bounds)
+        level.bounds.add()
+    b = level.bounds[index]
+    pb.rect(b,
+            get.number("X coordinate", default=b.pos.x),
+            get.number("Y coordinate", default=b.pos.y),
+            get.number("Width", default=b.size.x if b.size.x else None),
+            get.number("Height", default=b.size.y if b.size.y else None))
 
 def starts(level, fn):
-    menu = map(lambda x: "({}, {})".format(x.x, x.y), level.positions)
-    start = get.menu(menu, "Select a start position",
-                     create="add a start position...", value=False)
+    if len(level.positions):
+        menu = map(lambda x: "({}, {})".format(x.x, x.y), level.positions)
+        start = get.menu(menu, "Select a start position",
+                         create="add a start position...", value=False)
+    else:
+        print("\nAdd a new start position:")
+        start = -1
     if start < 0:
         start = len(level.positions)
         level.positions.add()
-    pb.vector(level.positions[start],
-              get.number("X coordinate", default=level.positions[start].x),
-              get.number("Y coordinate", default=level.positions[start].y))
+    s = level.positions[start]
+    pb.vector(s,
+              get.number("X coordinate", default=s.x),
+              get.number("Y coordinate", default=s.y))
 
 def entities(level, fn):
     menu = map(lambda x: "{} ({})".format(x.identifier, x.name),
@@ -91,7 +133,7 @@ def entities(level, fn):
 
 def visibility(level, fn):
     oldval = level.playerVisibility
-    level.playerVisibility = get.yesno("Is the player visible", default=get.Y)
+    level.playerVisibility = get.yesno("\nIs the player visible", default=get.Y)
     return oldval != level.playerVisibility
 
 def save(level, fn):

@@ -25,7 +25,7 @@ while True:
     print("\nPress Ctrl-D (EOF) to exit the current menu/action at any time.")
     try:
         f = get.menu(MAIN_MENU).data
-    except get.Cancel:
+    except get.Top:
         print("\n\nBye!\n")
         exit()
     try:
@@ -35,6 +35,6 @@ while True:
             print()
             get.goon()
         put.clear()
-    except get.Cancel:
+    except get.Top:
         put.clear()
         print("\nCancelled...")

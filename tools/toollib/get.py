@@ -14,7 +14,9 @@ class MenuChoice:
     def __str__(self):
         return self.name
 
-class Cancel(Exception): pass
+class Top(Exception): pass
+class Cancel(Top): pass
+
 
 ## Takes an iterable of iterables, each one containing a string and data.
 # Creates MenuChoice objects out of each inner iterable.
@@ -24,16 +26,22 @@ def make_menu(*args, backwards=False):
                  args))
 
 def getq(title, default=None, ending=FILLIN_ENDING):
-    print(DEFAULT_FORMAT.format(title, default) if default else title,
+    print(DEFAULT_FORMAT.format(title, default) if
+          (default or default == 0) else title,
           end=ending)
     try:
         return input()
     except EOFError as e:
         raise Cancel()
+    except KeyboardInterrupt as e:
+        raise Top()
 
 def goon(title="Press enter to continue"):
-    getq(title, ending="...")
-    
+    try:
+        getq(title, ending="...")
+    except Cancel:
+        pass
+        
 ## Offers a list of choices to the user and allows them to enter the
 #  number corresponding to their choice.
 # \param choices Iterable of choices, will be displayed as strings.
@@ -84,7 +92,7 @@ def number(title="Enter a float", positive=False, default=None):
     res = None
     while res is None:
         inp = getq(title, default)
-        if not inp and default:
+        if not inp and (default or default == 0):
             inp = default
         try:
             res = float(inp)
