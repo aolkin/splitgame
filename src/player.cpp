@@ -42,6 +42,10 @@ void Player::move(const BoolVector& v) {
   setPosition(getMove(v));
 }
 
+void Player::setInitialPosition(const sf::Vector2f& pos) {
+  setPosition(pos - sf::Vector2f(0, height / 2));
+}
+
 sf::FloatRect Player::getBounds (const BoolVector& v) const {
   sf::Vector2f pos = getMove(v, true);
   return sf::FloatRect(pos.x - width / 2,

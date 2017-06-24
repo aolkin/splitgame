@@ -53,10 +53,10 @@ class Wrapper:
             return oldval != getattr(e, attr)[i]
             
     def editfloat(self, e):
-        self.editindividual(e, "nargs", get.number)
+        return self.editindividual(e, "nargs", get.number)
         
     def editstring(self, e):
-        self.editindividual(e, "sargs", get.string)
+        return self.editindividual(e, "sargs", get.string)
 
     def name(self, e):
         oldname = e.name
@@ -103,10 +103,14 @@ class Generic(Wrapper):
         return super().menu() + get.make_menu(
             ("edit entity texture...", self.texture)
         )
+
+class Traveler(Wrapper):
+    nargs = 6
     
 wrapper = Wrapper()
 WRAPPERS = {
-    "generic": Generic()
+    "generic": Generic(),
+    "traveler": Traveler()
 }
 
 def getwrapper(e):

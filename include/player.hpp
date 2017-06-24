@@ -33,6 +33,7 @@ public:;
   bool isVisible() const { return visible; };
   void setVisibility(bool);
   void setMode (Mode);
+  void setInitialPosition(const sf::Vector2f&);
   void changeVelocity (const sf::Vector2f&);
   sf::Vector2f getMove (const BoolVector& =BoolVector::TRUE, bool=false) const;
   void move(const BoolVector& =BoolVector::TRUE);

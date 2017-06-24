@@ -84,7 +84,7 @@ Level::Level (sf::Image& roomImage) : mode(InputMode::None) {
 };
 
 void Level::activatePlayer () {
-  Player::singleton().setPosition(startPosition);
+  Player::singleton().setInitialPosition(startPosition);
   Player::singleton().setVisibility(playerVisibility);
   Player::singleton().setMode(playerMode);
 }
