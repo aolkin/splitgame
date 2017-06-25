@@ -104,13 +104,16 @@ class Generic(Wrapper):
             ("edit entity texture...", self.texture)
         )
 
+class Parallax(Generic): pass
+    
 class Traveler(Wrapper):
     nargs = 6
     
 wrapper = Wrapper()
 WRAPPERS = {
     "generic": Generic(),
-    "traveler": Traveler()
+    "traveler": Traveler(),
+    "parallax": Parallax(),
 }
 
 def getwrapper(e):

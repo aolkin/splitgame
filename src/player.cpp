@@ -46,6 +46,10 @@ void Player::setInitialPosition(const sf::Vector2f& pos) {
   setPosition(pos - sf::Vector2f(0, height / 2));
 }
 
+/**
+ * returns an sf::FloatRect describing a 10px high box the width of the
+ * player, aligned with his feet.
+ */
 sf::FloatRect Player::getBounds (const BoolVector& v) const {
   sf::Vector2f pos = getMove(v, true);
   return sf::FloatRect(pos.x - width / 2,

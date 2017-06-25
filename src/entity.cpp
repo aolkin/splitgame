@@ -56,6 +56,23 @@ bool Entity::hasCollided (const sf::FloatRect& player, bool interactive) {
   return collided;
 }
 
+void Entity::setPosition(const sf::Vector2f& pos) {
+  sf::Vector2f delta = pos - getPosition();
+  for (sf::FloatRect& r : bounds) {
+    r.left += delta.x;
+    r.top += delta.y;
+  }
+  for (sf::FloatRect& r : interactive_bounds) {
+    r.left += delta.x;
+    r.top += delta.y;
+  }
+  Sprite::setPosition(pos);
+}
+
+void Entity::setPosition(float x, float y) {
+  setPosition(sf::Vector2f(x, y));
+}
+
 void Entity::draw (sf::RenderTarget& target, sf::RenderStates states) const {
   Sprite::draw(target, states);
   #ifdef DEBUG_BUILD

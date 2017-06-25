@@ -66,6 +66,8 @@ public:
     return EntityAction();
   };
   virtual std::vector<EntityAction> tick (bool, const sf::FloatRect&);
+  void setPosition(float x, float y);
+  void setPosition(const sf::Vector2f& pos);
   
   void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 };

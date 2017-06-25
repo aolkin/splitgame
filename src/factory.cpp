@@ -3,10 +3,12 @@
 
 #include "entities/generic.hpp"
 #include "entities/traveler.hpp"
+#include "entities/parallax.hpp"
   
 EntityFactory::EntityFactory () {
   add_entity("generic", &Entities::Generic::makeNew);
   add_entity("traveler", &Entities::Traveler::makeNew);
+  add_entity("parallax", &Entities::Parallax::makeNew);
 }
   
 void EntityFactory::add_entity(const std::string s,
