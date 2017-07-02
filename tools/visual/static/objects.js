@@ -12,10 +12,12 @@ class Drawable {
 	} else {
 	    this._stage.addChild(d);
 	}
-	d.on("click", this);
-	d.on("pressmove", this);
-	d.on("mousedown", this);
-	d.on("pressup", this);
+	if (bind != false) {
+	    d.on("click", this);
+	    d.on("pressmove", this);
+	    d.on("mousedown", this);
+	    d.on("pressup", this);
+	}
 	d.moving = false;
     }
     destroy() {
@@ -54,7 +56,6 @@ class Drawable {
 	    }
 	    e.target.moving = false;
 	};
-	console.log(e.type, obj);
     }
     continueMove(o) {
 	o.target.x = o.moveX;
@@ -66,11 +67,16 @@ class Drawable {
     }
 }
 
+function markDirty() {
+    ve.updateText = true;
+    ve.dirty = true;
+}
+
 class StartPosition extends Drawable {
     constructor(vector, stage, img) {
 	super(stage);
 	this.p = new createjs.Bitmap(img);
-	this.addDrawable(this.p, true);
+	this.addDrawable(this.p);
 	this.p.sourceRect = new createjs.Rectangle(0, 0, 22, 60);
 	this.v = vector;
 	this.p.x = vector.x - this.p.sourceRect.width / 2;
@@ -79,8 +85,7 @@ class StartPosition extends Drawable {
     endMove(o) {
 	this.v.x = this.p.x + this.p.sourceRect.width / 2;
 	this.v.y = this.p.y + this.p.sourceRect.height;
-	ve.updateText = true;
-	ve.dirty = true;
+	markDirty();
     }
 }
 
@@ -112,12 +117,18 @@ class Entity extends Drawable {
 	this.e = entity;
 	this.bounds = new createjs.Shape();
 	this.g = this.bounds.graphics;
-	this.addDrawable(this.bounds, true);
+	this.addDrawable(this.bounds);
 	this.g.setStrokeStyle(2);
 	this.g.beginStroke("#0000ff");
-	this.g.drawRect(entity.nargs[0], entity.nargs[1],
-				      entity.nargs[2], entity.nargs[3]);
+	this.g.drawRect(0, 0, entity.nargs[2], entity.nargs[3]);
 	this.g.endStroke();
+	this.bounds.x = entity.nargs[0];
+	this.bounds.y = entity.nargs[1];
+    }
+    endMove(o) {
+	markDirty();
+	this.e.nargs[0] = this.bounds.x;
+	this.e.nargs[1] = this.bounds.y;
     }
 }
 
@@ -125,11 +136,21 @@ class Generic extends Entity {
     constructor(entity, stage) {
 	super(entity, stage);
 	this.img = new createjs.Bitmap("art/entity/" + entity.sargs[0]);
-	this.addDrawable(this.img);
+	this.addDrawable(this.img, true);
 	this.img.sourceRect = new createjs.Rectangle(0, 0, entity.nargs[2],
 						     entity.nargs[3]);
 	this.img.x = entity.nargs[0];
 	this.img.y = entity.nargs[1];
+    }
+    endMove(o) {
+	if (o.target == this.img) {
+	    this.bounds.x = this.img.x;
+	    this.bounds.y = this.img.y;
+	} else {
+	    this.img.x = this.bounds.x;
+	    this.img.y = this.bounds.y;
+	}
+	super.endMove(o);
     }
 }
 
