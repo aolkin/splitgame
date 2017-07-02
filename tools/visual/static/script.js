@@ -19,9 +19,16 @@ function destroyArray(a) {
 };
 
 function loadLevel(room) {
+    if (ve.dirty) {
+	if (!confirm("You will lose your unsaved changes, load anyway?")) {
+	    return false;
+	}
+    }
     for (let o of OBJECTS) {
 	destroyArray(ve[o]);
     }
+    ve.level = { };
+    ve.dirty = false;
     $.getNative("room/" + room).then(function(data, status, xhr) {
         ve.level = pb.Level.decode(
             new Uint8Array(data, 0, data.byteLength));
@@ -39,14 +46,29 @@ function loadLevel(room) {
 		ve.entities.push(new Entity(entity, ve.stage));
 	    }
 	}
+	ve.updateText = true;
     }, function(xhr, status, error) {
         console.log(status, error);
+	loadBackground("../../static/blank.png");
 	ve.level = pb.Level.fromObject({});
+	ve.updateText = true;
     });
 };
 
 function saveLevel(room) {
-
+    let bin = pb.Level.encode(ve.level).finish();
+    $.ajax({
+	url: '/room/' + room,
+	type: 'POST',
+	contentType: 'application/octet-stream',
+	data: bin,
+	processData: false
+    }).then(function() {
+	$("#message").text("Save succeeded!");
+	ve.dirty = false;
+    }, function() {
+	$("#message").text("Save failed!");
+    });
 };
 
 function loadBackground(t) {
@@ -69,9 +91,11 @@ function render() {
 	}
     }
     ve.stage.update();
-    if (ve.level) {
-	$("#text").text(JSON.stringify(pb.Level.toObject(ve.level),
-				       undefined, 4));
+    if (ve.level && ve.updateText) {
+	$("#text").JSONView(pb.Level.toObject(ve.level), {
+	    collapsed: false
+	});
+	ve.updateText = false;
     };
 };
 

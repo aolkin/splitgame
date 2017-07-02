@@ -76,6 +76,12 @@ class StartPosition extends Drawable {
 	this.p.x = vector.x - this.p.sourceRect.width / 2;
 	this.p.y = vector.y - this.p.sourceRect.height;
     }
+    endMove(o) {
+	this.v.x = this.p.x + this.p.sourceRect.width / 2;
+	this.v.y = this.p.y + this.p.sourceRect.height;
+	ve.updateText = true;
+	ve.dirty = true;
+    }
 }
 
 class Boundary extends Drawable {
@@ -87,9 +93,16 @@ class Boundary extends Drawable {
 	this.r = rect;
 	this.g.setStrokeStyle(2);
 	this.g.beginStroke("#ff0000");
-	this.g.drawRect(rect.pos.x, rect.pos.y,
-			rect.size.x, rect.size.y);
+	this.g.drawRect(0, 0, rect.size.x, rect.size.y);
 	this.g.endStroke();
+	this.s.x = rect.pos.x;
+	this.s.y = rect.pos.y;
+    }
+    endMove(o) {
+	this.r.pos.x = this.s.x;
+	this.r.pos.y = this.s.y;
+	ve.updateText = true;
+	ve.dirty = true;
     }
 }
 

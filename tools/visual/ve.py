@@ -29,11 +29,17 @@ def send_pb(path):
 def send_static(path):
         return send_from_directory(os.path.join(APP_DIR, "static"), path)
 
-@app.route("/room/<path:path>")
+@app.route("/room/<path:path>", methods=["GET", "POST"])
 def send_room(path):
         fn = os.path.join(BASE_DIR, "rooms/" + path + ".dat")
-        if os.path.isfile(fn):
-                return send_file(fn, attachment_filename=path + ".dat",
-                                 as_attachment=True)
-        else:
-                abort(404)
+        if request.method == "GET":
+                if os.path.isfile(fn):
+                        return send_file(fn, attachment_filename=path + ".dat",
+                                         as_attachment=True)
+                else:
+                        abort(404)
+        elif request.method == "POST":
+                fd = open(fn, "wb")
+                fd.write(request.data)
+                fd.close()
+                return "done"
