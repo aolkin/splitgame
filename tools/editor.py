@@ -1,15 +1,27 @@
 #!/usr/bin/env python3
 
-import sys, os
+import sys, os, webbrowser, threading, time
 
 from toollib import get, level, put
+
+from visual.ve import app
 
 def synchronize():
     put.system("git pull")
     os.execv(sys.executable, ["python3"] + sys.argv + ["restart"])
 
+def openvisual():
+    time.sleep(0.5)
+    put.system("open http://localhost:5000/")
+    
+def visualeditor():
+    threading.Thread(target=openvisual).start()
+    app.run()
+    print()
+    
 MAIN_MENU = get.make_menu(
     ("Level Editor", level.edit),
+    ("Visual Editor (Opens in Web Browser)", visualeditor),
     ("Get Latest Code", synchronize),
     ("Run Game", put.make_system("./SPLIT"))
 )

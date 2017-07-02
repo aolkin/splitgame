@@ -87,7 +87,7 @@ PB_DEPS := $(PB_H:.pb.h=.d)
 
 $(GEN_DIR)/%.pb.h: %.proto
 	@$(MKDIR_P) $(dir $@)
-	protoc $< --cpp_out=gen --python_out=gen --dependency_out=gen/$<.d
+	protoc $< --cpp_out=$(GEN_DIR) --python_out=$(GEN_DIR) --dependency_out=gen/$<.d
 
 $(GEN_DIR)/%_pb2.py: %.pb.h
 
@@ -97,8 +97,11 @@ protobuf: $(PB_H)
 
 ### PYTHON
 
-editor: $(PB_PY)
+editor: protobuf
 	@PYTHONPATH=$(GEN_DIR) python3 tools/editor.py $(ARG)
+
+ve: protobuf
+	@PYTHONPATH=$(GEN_DIR) FLASK_DEBUG=1 FLASK_APP=tools/visual/ve.py flask run
 
 ### CLEANERS
 
