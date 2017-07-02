@@ -85,6 +85,7 @@ class Boundary extends Drawable {
 	this.addDrawable(this.s, true, true);
 	this.g = this.s.graphics;
 	this.r = rect;
+	this.g.setStrokeStyle(2);
 	this.g.beginStroke("#ff0000");
 	this.g.drawRect(rect.pos.x, rect.pos.y,
 			rect.size.x, rect.size.y);
@@ -97,11 +98,13 @@ class Entity extends Drawable {
 	super(stage);
 	this.e = entity;
 	this.bounds = new createjs.Shape();
+	this.g = this.bounds.graphics;
 	this.addDrawable(this.bounds, true);
-	this.bounds.graphics.beginStroke("#0000ff");
-	this.bounds.graphics.drawRect(entity.nargs[0], entity.nargs[1],
+	this.g.setStrokeStyle(2);
+	this.g.beginStroke("#0000ff");
+	this.g.drawRect(entity.nargs[0], entity.nargs[1],
 				      entity.nargs[2], entity.nargs[3]);
-	this.bounds.graphics.endStroke();
+	this.g.endStroke();
     }
 }
 

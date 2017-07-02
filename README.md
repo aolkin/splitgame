@@ -44,9 +44,14 @@ The makefile is setup to build on an OSX system.
 - docs: builds the documentation then opens it in a web browser.
 - docbuild: just builds the documentation.
 - docbrowse: just opens the documentation in a web browser.
+- alldocs: like docs, but includes undocumented members.
+- alldocbuild: like docbuild, but includes undocumented members.
+- alldocbrowse: like docbrowse, but includes undocumented members.
 - protobuf: builds the protocol buffer c++ code.
-- editor: runs the python level editor script.
+- editor: runs the python editor. Can be used to launch the visual editor.
+- ve: runs the Flask-based visual editor in debug mode.
 - clean: removes all build artifacts, including the executable.
 - cleanexe: deletes the executable.
-- genclean: deletes generated files, such as protocol buffers code.
+- genclean, cleangen: deletes generated files, such as protocol buffers code.
 - cleanall: runs all three of the above rules.
+- lines: counts how many lines have been written in total.
